@@ -80,6 +80,7 @@ public class Server {
     }
 
     private static String fillScript(Script script, Values values){
+            //usar replace  e não split
             String news = "";
             String[] words = script.script.split(" ");
             System.out.println(words.length);

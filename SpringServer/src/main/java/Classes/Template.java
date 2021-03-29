@@ -1,19 +1,20 @@
+package Classes;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Script {
-    int id;
-    String[] tags;
-    String script;
-    //Map {key_word,[index,index,...]}
-    Map<String, List> keyWords_Index;
+public class Template {
+    int id; //no clue
+    List<String> tags; //diversas tags no template
+    String template; //template, duh
 
-    public Script(int id, String[] tags, String script, String keyWords){
+    Map<String, List> keyWords_Index; //deprecated, a trocar pela gramatica
+
+    public Template(int id, String[] tags, String script, String keyWords){
         setId(id);
         setTags(tags);
-        setScript(script);
         setKeyWords_Index(extractKeyWords_MAP(keyWords)); //duplos espaços
     }
 
@@ -38,8 +39,6 @@ public class Script {
     }
 
     public boolean hasTag(String tag){
-        for(int i=0; i<tags.length; i++)
-            if(tags[i].equals(tag)) return true;
         return false;
     }
 
@@ -48,20 +47,11 @@ public class Script {
     }
 
     public void setTags(String[] tags) {
-        this.tags = tags;
+
     }
 
-    public void setScript(String script) {
-        this.script = script;
-    }
 
-    public String[] getTags() {
-        return tags;
-    }
 
-    public String getScript() {
-        return script;
-    }
 
     public int getId() {
         return id;
