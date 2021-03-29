@@ -1,0 +1,1 @@
+O "TITULO_JOG" do "CLUBE" assinalou no ultimo jogo a sua "NR_JOGOS_JOG". "NOME_JOG" estreou-se a "ESTREIA_JOG", numa partida onde o "CLUBE" enfrentou o "ADVERSARIO", com um resultado final de "RESULTADO_ESTREIA".
