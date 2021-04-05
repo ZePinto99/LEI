@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Template {
-    int id; //no clue
+    Integer id;
     List<String> tags; //diversas tags no template
     String template; //template, duh
 

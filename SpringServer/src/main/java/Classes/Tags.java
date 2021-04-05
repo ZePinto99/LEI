@@ -8,10 +8,11 @@ public class Tags {
     private String idJogador;
 
 
-    public Tags(String tAlerta, String vAlerta) {
-
-        this.tipoAlerta = tAlerta;
-        this.valorAlerta = vAlerta;
+    public Tags(String tipoAlerta, String valorAlerta, String tipoComp, String idJogador) {
+        this.tipoAlerta = tipoAlerta;
+        this.valorAlerta = valorAlerta;
+        this.tipoComp = tipoComp;
+        this.idJogador = idJogador;
     }
 
 

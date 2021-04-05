@@ -15,15 +15,16 @@ public class RequestController {
 	@PostMapping("/getInfo")
 	public String getInfo(@RequestBody Tags tg) {
 
+		System.out.println("--------" + tg.getName());
 		TemplateManager templateManager = new TemplateManager();
-		List<Template> templates = templateManager.getRelatedTemplates(tg.getName());
+		List<String> templates = templateManager.getRelatedTemplates(tg.getName());
 
-		String noticia = templateManager.selectTemplate(templates, null);
+		String noticia = templateManager.selectTemplate(templates, new Values());
 
 		//Method to get info
 
 		//JsonConverter
-		return "something";
+		return noticia;
 	}
 
 }
