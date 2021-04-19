@@ -1,1 +1,1 @@
-SELECT * FROM mydb.template;
+Insert into template VALUes (DEFAULT, 'O "TITULO_JOG" do "CLUBE" assinalou no ultimo jogo a sua presenca numero "NR_JOGOS_JOG". "NOME_JOG" estreou-se a "ESTREIA_JOG", numa partida onde o "CLUBE" enfrentou o "ADVERSARIO", com um resultado final de "RESULTADO_ESTREIA".', 100, 1,1);

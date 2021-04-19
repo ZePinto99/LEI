@@ -10,13 +10,13 @@ public class Values {
     String v_RESULTADO_ESTREIA;
 
     public Values(){
-        v_TITULO_JOG = "Capitão da porra toda";
-        v_CLUBE = "Sport Clube de Vila Real";
+        v_TITULO_JOG = "Capitão";
+        v_CLUBE = "Sporting CLube de Braga";
         v_NR_JOGOS_JOG = "150";
-        v_NOME_JOG = "Pintoca";
-        v_ESTREIA_JOG = "dia de São Nunca à Tarde";
+        v_NOME_JOG = "Ricardo Horta";
+        v_ESTREIA_JOG = "30 de fevereiro";
         v_ADVERSARIO = "Real Madrid";
-        v_RESULTADO_ESTREIA = "30 batatas";
+        v_RESULTADO_ESTREIA = "10-0";
     }
 
     public String getValue(String key){
