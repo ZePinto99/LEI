@@ -4,15 +4,13 @@ import java.sql.*;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class TemplateManager {
 
-    public static List<String> getRelatedTemplates(String tipoNoticia){
+    public static Map<String, Integer> getFirstTemplate(String tipoNoticia){
 
-        List<String> templateList = new ArrayList<>();
+        Map<String, Integer> templateMap = new HashMap<>();
 
         try {
             System.out.println("tipo: " + tipoNoticia);
@@ -24,12 +22,13 @@ public class TemplateManager {
 
             Statement select = conn.createStatement();
 
-            String sql = "SELECT text FROM template WHERE type = " + tipoNoticia + ";";
+            String sql = "SELECT text, keywords FROM template WHERE type = " + tipoNoticia + ";";
+
             ResultSet rs = select.executeQuery(sql);
 
             while (rs.next()) {
                 System.out.println("in");
-                templateList.add(rs.getString(1));
+                templateMap.put(rs.getString(1), rs.getInt(2));
             }
 
             conn.close();
@@ -38,44 +37,50 @@ public class TemplateManager {
             System.out.println(e.getMessage());
         }
 
-        return templateList;
+        return templateMap;
     }
 
-    public static String selectTemplate(List<String> relatedScripts, Values values){
+    public static String selectTemplate(Map<String, Integer> relatedScripts, Values values){
 
-        /*
-        List<String> finalTemplates = new ArrayList<>();
-
-        algoritmo de seleção
-
-        int usedScripts = 0;
-        String finalScript = "";
+        //random.nextInt(max - min) + min;
         Random random = new Random();
-        //Se tivermos mais que um script relacionado e se não tivermos usado até ao número de scripts -1
-        while (relatedScripts.size()>1 && usedScripts < relatedScripts.size() -1){
-            for (String script: relatedScripts){
-                //Prob de 50% de o script ser escolhido
-                //random.nextInt(max - min) + min;
-                if((random.nextInt(10 - 1) + 1) < 5){
-                    //adc scripts a uma lista de scripts selecionados
-                    usedScripts ++;
-                    finalTemplates.add(script);
-                    relatedScripts.remove(script);
+        int randIndex = random.nextInt(relatedScripts.size() - 1) + 1;
+
+        List<String> templatesList = new ArrayList<String>(relatedScripts.keySet());
+        String firstTemplate = templatesList.get(randIndex);
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            Connection conn = DriverManager.
+                    getConnection("jdbc:mysql://localhost:3306/mydb?user=root&password="
+                            + "root" + "&useTimezone=true&serverTimezone=UTC");
+
+            Statement select = conn.createStatement();
+
+            String sql = "SELECT * FROM keywords WHERE id_keywords = " + relatedScripts.get(firstTemplate) + ";";
+
+            ResultSet rs = select.executeQuery(sql);
+
+            List<Integer> keywordsCount = new ArrayList<>();
+
+            while (rs.next()) {
+                for (int count = 0; count <5; count++){
+                    keywordsCount.set(count, rs.getInt(count+1));
                 }
             }
+
+            values.setKeywords(keywordsCount);
+
+            conn.close();
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
-        preencher templates
 
-        if(relatedScripts.size() == 1)
-            finalScript = fillScript(relatedScripts.get(0), values);
-        else
-            for (Template template : finalTemplates)
-                finalScript = finalScript + fillScript(template, values) + " ";
-        */
+        //Chamar métoda para seleção segundo e terceiro template. Usar values para ver keywords usadas. chamar fillScript com os 3 templates
 
-        System.out.println(relatedScripts.get(0));
-
-        return fillScript(relatedScripts.get(0),values);
+        return fillScript(firstTemplate,values);
     }
 
     public static String fillScript(String template, Values values){
