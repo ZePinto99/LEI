@@ -139,11 +139,12 @@ public class TemplateManager {
 
             ResultSet rs = select.executeQuery(sql);
 
-            List<Integer> keywordsCount = new ArrayList<>();
+            List<Integer> keywordsCount = values.getKeywords();
 
             while (rs.next()) {
                 for (int count = 0; count <5; count++){
-                    keywordsCount.set(count, rs.getInt(count+1));
+
+                    keywordsCount.set(count, rs.getInt(count+1)+keywordsCount.get(count));
                 }
             }
             values.addToNumberOfTemplates();

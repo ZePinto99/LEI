@@ -28,6 +28,10 @@ public class Values {
         numberOfTemplates=0;
     }
 
+    public List<Integer> getKeywords(){
+        return keywords;
+    }
+
     public String getValue(String key){
         String ret;
         switch (key){
