@@ -12,6 +12,7 @@ public class Values {
     String v_ADVERSARIO;
     String v_RESULTADO_ESTREIA;
     List<Integer> keywords;
+    Integer numberOfTemplates;
 
     public Values(){
         v_TITULO_JOG = "Capitão";
@@ -24,6 +25,7 @@ public class Values {
         keywords = new ArrayList<>();
         for (int i = 0; i<5; i++)
             keywords.set(i, 0);
+        numberOfTemplates=0;
     }
 
     public String getValue(String key){
@@ -59,6 +61,14 @@ public class Values {
 
     public void setKeywords(List<Integer> keywordsCount){
 
+    }
+
+    public void addToNumberOfTemplates(){
+        numberOfTemplates++;
+    }
+
+    public Integer getNumberOfTemplates(){
+        return numberOfTemplates;
     }
 
     public String getV_TITULO_JOG() {

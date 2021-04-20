@@ -8,9 +8,21 @@ import java.util.*;
 
 public class TemplateManager {
 
-    public static Map<String, Integer> getFirstTemplate(String tipoNoticia){
 
-        Map<String, Integer> templateMap = new HashMap<>();
+    private List<Integer> usedIds                        = new ArrayList<>();
+    private List<String> templatesToUse                  = new ArrayList<>();
+    private Values values;
+    String noticia;
+
+    public TemplateManager(){
+        values = new Values();
+    }
+
+    public String getFirstTemplate(String tipoNoticia){
+
+        noticia="";
+        Map<String, Integer> templatePlusKeywordsMap = new HashMap<>();
+        Map<String, Integer> templatePlusIdMap       = new HashMap<>();
 
         try {
             System.out.println("tipo: " + tipoNoticia);
@@ -22,13 +34,14 @@ public class TemplateManager {
 
             Statement select = conn.createStatement();
 
-            String sql = "SELECT text, keywords FROM template WHERE type = " + tipoNoticia + ";";
+            String sql = "SELECT text, keywords, id_template FROM template WHERE type = " + tipoNoticia + ";";
 
             ResultSet rs = select.executeQuery(sql);
 
             while (rs.next()) {
                 System.out.println("in");
-                templateMap.put(rs.getString(1), rs.getInt(2));
+                templatePlusKeywordsMap.put(rs.getString(1), rs.getInt(2));
+                templatePlusIdMap.put(rs.getString(1), rs.getInt(3));
             }
 
             conn.close();
@@ -37,17 +50,21 @@ public class TemplateManager {
             System.out.println(e.getMessage());
         }
 
-        return templateMap;
+
+        //escolher 1o template
+        selectTemplate(templatePlusKeywordsMap,templatePlusIdMap);
+
+        //chamar metodo para escolher e gerar proximos templates
+        templateLoop();
+
+        return fillScript(noticia);
     }
 
-    public static String selectTemplate(Map<String, Integer> relatedScripts, Values values){
 
-        //random.nextInt(max - min) + min;
-        Random random = new Random();
-        int randIndex = random.nextInt(relatedScripts.size() - 1) + 1;
+    public void templateLoop(){
 
-        List<String> templatesList = new ArrayList<String>(relatedScripts.keySet());
-        String firstTemplate = templatesList.get(randIndex);
+        Map<String, Integer> templatePlusKeywordsMap = new HashMap<>();
+        Map<String, Integer> templatePlusIdMap       = new HashMap<>();
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -57,8 +74,68 @@ public class TemplateManager {
                             + "root" + "&useTimezone=true&serverTimezone=UTC");
 
             Statement select = conn.createStatement();
+            String listIds = "";
+            boolean firstTime = true;
+            for(Integer id : usedIds){
+                if(firstTime) {
+                    listIds += id;
+                    firstTime = false;
+                }
+                else
+                    listIds +="," + id;
+            }
 
-            String sql = "SELECT * FROM keywords WHERE id_keywords = " + relatedScripts.get(firstTemplate) + ";";
+            //adicionar filtros na query para ver keyWords relevantes
+
+            String sql = "SELECT text, keywords, id_template FROM template WHERE id_template NOT IN (" + listIds + ") ;";
+
+            ResultSet rs = select.executeQuery(sql);
+
+            while (rs.next()) {
+                System.out.println("in");
+                templatePlusKeywordsMap.put(rs.getString(1), rs.getInt(2));
+                templatePlusIdMap.put(rs.getString(1), rs.getInt(3));
+            }
+
+            conn.close();
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+
+        //escolher template da lista selecionada
+        selectTemplate(templatePlusKeywordsMap,templatePlusIdMap);
+
+
+        //adicionar validaçao do numero de palavras neste if
+        if(values.getNumberOfTemplates()<3){
+            templateLoop();
+        }
+        return;
+    }
+
+
+    public void selectTemplate(Map<String,Integer> templatePlusKeywordsMap, Map<String,Integer> templatePlusIdMap){
+
+        //random.nextInt(max - min) + min;
+        Random random = new Random();
+        int randIndex = random.nextInt(templatePlusKeywordsMap.size() - 1) + 1;
+
+        List<String> templatesList = new ArrayList<String>(templatePlusKeywordsMap.keySet());
+        String template = templatesList.get(randIndex);
+        usedIds.add(templatePlusIdMap.get(template));
+        templatesToUse.add(template);
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            Connection conn = DriverManager.
+                    getConnection("jdbc:mysql://localhost:3306/mydb?user=root&password="
+                            + "root" + "&useTimezone=true&serverTimezone=UTC");
+
+            Statement select = conn.createStatement();
+
+            String sql = "SELECT * FROM keywords WHERE id_keywords = " + templatePlusKeywordsMap.get(template) + ";";
 
             ResultSet rs = select.executeQuery(sql);
 
@@ -69,21 +146,20 @@ public class TemplateManager {
                     keywordsCount.set(count, rs.getInt(count+1));
                 }
             }
-
+            values.addToNumberOfTemplates();
             values.setKeywords(keywordsCount);
-
+            noticia +=template + " ";
             conn.close();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
-        //Chamar métoda para seleção segundo e terceiro template. Usar values para ver keywords usadas. chamar fillScript com os 3 templates
 
-        return fillScript(firstTemplate,values);
     }
 
-    public static String fillScript(String template, Values values){
+
+    public String fillScript(String template){
         try {
             noticiaLexer lexer = new noticiaLexer(CharStreams.fromString(template));
             System.out.println("error1");

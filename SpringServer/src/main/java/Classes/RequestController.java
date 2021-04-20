@@ -18,9 +18,8 @@ public class RequestController {
 		System.out.println("--------" + tg.getName());
 		TemplateManager templateManager = new TemplateManager();
 
-		List<String> templates = templateManager.getFirstTemplate(tg.getName());
+		String noticia = templateManager.getFirstTemplate(tg.getName());
 
-		String noticia = templateManager.selectTemplate(templates, new Values());
 
 		//Method to get info
 
