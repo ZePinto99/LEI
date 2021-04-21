@@ -13,16 +13,20 @@ public class TemplateManager {
     private List<String> templatesToUse                  = new ArrayList<>();
     private Values values;
     String noticia;
+    int tamanho;
+    int tamanhoMax;
 
     public TemplateManager(){
-        values = new Values();
+        values = new Values(); tamanhoMax = 500;
     }
 
     public String getFirstTemplate(String tipoNoticia){
 
         noticia="";
+        tamanho = 0;
         Map<String, Integer> templatePlusKeywordsMap = new HashMap<>();
         Map<String, Integer> templatePlusIdMap       = new HashMap<>();
+        Map<String, Integer> templatePlusSizeMap     = new HashMap<>();
 
         try {
             System.out.println("tipo: " + tipoNoticia);
@@ -34,7 +38,7 @@ public class TemplateManager {
 
             Statement select = conn.createStatement();
 
-            String sql = "SELECT text, keywords, id_template FROM template WHERE type = " + tipoNoticia + ";";
+            String sql = "SELECT text, keywords, id_template, size FROM template WHERE type = " + tipoNoticia + ";";
 
             ResultSet rs = select.executeQuery(sql);
 
@@ -42,6 +46,7 @@ public class TemplateManager {
                 System.out.println("in");
                 templatePlusKeywordsMap.put(rs.getString(1), rs.getInt(2));
                 templatePlusIdMap.put(rs.getString(1), rs.getInt(3));
+                templatePlusSizeMap.put(rs.getString(1), rs.getInt(4));
             }
 
             conn.close();
@@ -52,7 +57,8 @@ public class TemplateManager {
 
 
         //escolher 1o template
-        selectTemplate(templatePlusKeywordsMap,templatePlusIdMap);
+        String template = selectTemplate(templatePlusKeywordsMap);
+        updateWithSelectedTemplate(template, templatePlusKeywordsMap,templatePlusIdMap, templatePlusSizeMap);
 
         //chamar metodo para escolher e gerar proximos templates
         templateLoop();
@@ -65,6 +71,7 @@ public class TemplateManager {
 
         Map<String, Integer> templatePlusKeywordsMap = new HashMap<>();
         Map<String, Integer> templatePlusIdMap       = new HashMap<>();
+        Map<String, Integer> templatePlusSizeMap     = new HashMap<>();
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -87,7 +94,7 @@ public class TemplateManager {
 
             //adicionar filtros na query para ver keyWords relevantes
 
-            String sql = "SELECT text, keywords, id_template FROM template WHERE id_template NOT IN (" + listIds + ") ;";
+            String sql = "SELECT text, keywords, size, id_template FROM template WHERE id_template NOT IN (" + listIds + ") ;";
 
             ResultSet rs = select.executeQuery(sql);
 
@@ -95,6 +102,7 @@ public class TemplateManager {
                 System.out.println("in");
                 templatePlusKeywordsMap.put(rs.getString(1), rs.getInt(2));
                 templatePlusIdMap.put(rs.getString(1), rs.getInt(3));
+                templatePlusSizeMap.put(rs.getString(1), rs.getInt(4));
             }
 
             conn.close();
@@ -105,25 +113,36 @@ public class TemplateManager {
 
 
         //escolher template da lista selecionada
-        selectTemplate(templatePlusKeywordsMap,templatePlusIdMap);
+        //escolhe template o template se este não passar do limite
+        boolean invalidTemplate = true;
+        int attempts = 0;
+        //tenta adicionar x vezes
+        while (invalidTemplate && attempts<templatePlusSizeMap.keySet().size()){
+            String template = selectTemplate(templatePlusKeywordsMap);
+            if ((templatePlusSizeMap.get(template)+tamanho) < tamanhoMax)
+                invalidTemplate = false;
+                updateWithSelectedTemplate(template, templatePlusKeywordsMap, templatePlusIdMap, templatePlusSizeMap);
+        }
 
-
-        //adicionar validaçao do numero de palavras neste if
-        if(values.getNumberOfTemplates()<3){
+        //Temos de ver se passou do limite ou se está perto de passar
+        if(tamanho<tamanhoMax && !invalidTemplate){
             templateLoop();
         }
-        return;
     }
 
-
-    public void selectTemplate(Map<String,Integer> templatePlusKeywordsMap, Map<String,Integer> templatePlusIdMap){
-
+    public String selectTemplate(Map<String,Integer> templatePlusKeywordsMap){
         //random.nextInt(max - min) + min;
         Random random = new Random();
         int randIndex = random.nextInt(templatePlusKeywordsMap.size() - 1) + 1;
 
         List<String> templatesList = new ArrayList<String>(templatePlusKeywordsMap.keySet());
         String template = templatesList.get(randIndex);
+
+        return  template;
+    }
+
+    public int updateWithSelectedTemplate(String template,Map<String,Integer> templatePlusKeywordsMap, Map<String,Integer> templatePlusIdMap,  Map<String,Integer> templatePlusSizeMap){
+
         usedIds.add(templatePlusIdMap.get(template));
         templatesToUse.add(template);
         try {
@@ -150,13 +169,13 @@ public class TemplateManager {
             values.addToNumberOfTemplates();
             values.setKeywords(keywordsCount);
             noticia +=template + " ";
+            tamanho += templatePlusSizeMap.get(template);
             conn.close();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-
-
+        return templatePlusSizeMap.get(template);
     }
 
 
