@@ -10,7 +10,6 @@ public class TemplateManager {
 
 
     private List<Integer> usedIds                        = new ArrayList<>();
-    private List<String> templatesToUse                  = new ArrayList<>();
     private Values values;
     String noticia;
     int tamanho;
@@ -153,7 +152,6 @@ public class TemplateManager {
     public int updateWithSelectedTemplate(String template,Map<String,Integer> templatePlusKeywordsMap, Map<String,Integer> templatePlusIdMap,  Map<String,Integer> templatePlusSizeMap){
 
         usedIds.add(templatePlusIdMap.get(template));
-        templatesToUse.add(template);
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
