@@ -1,4 +1,4 @@
-package Classes;// Generated from C:/Users/franc/Documents/LEI\noticia.g4 by ANTLR 4.8
+// Generated from C:/Users/franc/Documents/LEI\noticia.g4 by ANTLR 4.8
 
     import java.io.*;
     import java.text.*;

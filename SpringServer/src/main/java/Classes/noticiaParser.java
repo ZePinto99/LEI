@@ -1,4 +1,4 @@
-package Classes;// Generated from C:/Users/franc/Documents/LEI\noticia.g4 by ANTLR 4.8
+// Generated from C:/Users/franc/Documents/LEI\noticia.g4 by ANTLR 4.8
 
     import java.io.*;
     import java.text.*;
@@ -129,7 +129,7 @@ public class noticiaParser extends Parser {
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof noticiaVisitor) return ((noticiaVisitor<? extends T>)visitor).visitNoticias(this);
+			if ( visitor instanceof noticiaVisitor ) return ((noticiaVisitor<? extends T>)visitor).visitNoticias(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -204,7 +204,7 @@ public class noticiaParser extends Parser {
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof noticiaVisitor) return ((noticiaVisitor<? extends T>)visitor).visitTexto(this);
+			if ( visitor instanceof noticiaVisitor ) return ((noticiaVisitor<? extends T>)visitor).visitTexto(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -253,7 +253,7 @@ public class noticiaParser extends Parser {
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof noticiaVisitor) return ((noticiaVisitor<? extends T>)visitor).visitKeyword(this);
+			if ( visitor instanceof noticiaVisitor ) return ((noticiaVisitor<? extends T>)visitor).visitKeyword(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -297,7 +297,7 @@ public class noticiaParser extends Parser {
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof noticiaVisitor) return ((noticiaVisitor<? extends T>)visitor).visitString(this);
+			if ( visitor instanceof noticiaVisitor ) return ((noticiaVisitor<? extends T>)visitor).visitString(this);
 			else return visitor.visitChildren(this);
 		}
 	}
