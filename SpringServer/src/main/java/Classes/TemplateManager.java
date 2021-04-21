@@ -16,9 +16,12 @@ public class TemplateManager {
     int tamanho;
     int tamanhoMax;
 
+
     public TemplateManager(){
-        values = new Values(); tamanhoMax = 500;
+        values = new Values();
+        tamanhoMax = 100;
     }
+
 
     public String getFirstTemplate(String tipoNoticia){
 
@@ -38,7 +41,7 @@ public class TemplateManager {
 
             Statement select = conn.createStatement();
 
-            String sql = "SELECT text, keywords, id_template, size FROM template WHERE type = " + tipoNoticia + ";";
+            String sql = "SELECT text, keywords, id_template, size FROM template, version WHERE template.version = id_version AND version.type = " + tipoNoticia + ";";
 
             ResultSet rs = select.executeQuery(sql);
 
@@ -54,7 +57,6 @@ public class TemplateManager {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-
 
         //escolher 1o template
         String template = selectTemplate(templatePlusKeywordsMap);
@@ -111,7 +113,6 @@ public class TemplateManager {
             System.out.println(e.getMessage());
         }
 
-
         //escolher template da lista selecionada
         //escolhe template o template se este não passar do limite
         boolean invalidTemplate = true;
@@ -130,16 +131,24 @@ public class TemplateManager {
         }
     }
 
+
     public String selectTemplate(Map<String,Integer> templatePlusKeywordsMap){
         //random.nextInt(max - min) + min;
         Random random = new Random();
-        int randIndex = random.nextInt(templatePlusKeywordsMap.size() - 1) + 1;
+
+        int size = templatePlusKeywordsMap.size();
+        System.out.println("size:" + size);
+
+        int randIndex;
+        if(size == 1) randIndex = 0;
+        else randIndex = random.nextInt(size - 1);
 
         List<String> templatesList = new ArrayList<String>(templatePlusKeywordsMap.keySet());
         String template = templatesList.get(randIndex);
 
         return  template;
     }
+
 
     public int updateWithSelectedTemplate(String template,Map<String,Integer> templatePlusKeywordsMap, Map<String,Integer> templatePlusIdMap,  Map<String,Integer> templatePlusSizeMap){
 
@@ -161,7 +170,7 @@ public class TemplateManager {
             List<Integer> keywordsCount = values.getKeywords();
 
             while (rs.next()) {
-                for (int count = 0; count <5; count++){
+                for (int count = 0; count < 23; count++){
 
                     keywordsCount.set(count, rs.getInt(count+1)+keywordsCount.get(count));
                 }
@@ -182,21 +191,21 @@ public class TemplateManager {
     public String fillScript(String template){
         try {
             noticiaLexer lexer = new noticiaLexer(CharStreams.fromString(template));
-            System.out.println("error1");
+            System.out.println("checkpoint1");
             CommonTokenStream stream = new CommonTokenStream(lexer);
-            System.out.println("error2");
+            System.out.println("checkpoint2");
             noticiaParser noticiasParser = new noticiaParser(stream);
-            System.out.println("error3");
+            System.out.println("checkpoint3");
             StringBuilder noticia = new StringBuilder();
-            System.out.println("error4");
+            System.out.println("checkpoint4");
             noticiasParser.noticias(values, noticia);
             System.out.println("Esta é a noticia: " + noticia.toString());
             return noticia.toString();
         }
         catch (Exception e){
-            System.out.println("error");
             return e.toString();
         }
 
     }
+
 }

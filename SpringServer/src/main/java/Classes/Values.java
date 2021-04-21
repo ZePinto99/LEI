@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Values {
     String v_NOME_JOG;
-    String v_TITULO_JOG;
+    String v_POS_JOG;
     String v_CLUBE;
     String v_NR_JOGOS_JOG;
     String v_ESTREIA_JOG;
@@ -15,16 +15,16 @@ public class Values {
     Integer numberOfTemplates;
 
     public Values(){
-        v_TITULO_JOG = "Capitão";
-        v_CLUBE = "Sporting CLube de Braga";
+        v_POS_JOG = "Avançado";
+        v_CLUBE = "Sporting Clube de Braga";
         v_NR_JOGOS_JOG = "150";
         v_NOME_JOG = "Ricardo Horta";
         v_ESTREIA_JOG = "30 de fevereiro";
         v_ADVERSARIO = "Real Madrid";
         v_RESULTADO_ESTREIA = "10-0";
-        keywords = new ArrayList<>();
-        for (int i = 0; i<5; i++)
-            keywords.set(i, 0);
+        keywords = new ArrayList<>(23);
+        for (int i = 0; i<23; i++)
+            keywords.add(0);
         numberOfTemplates=0;
     }
 
@@ -35,8 +35,8 @@ public class Values {
     public String getValue(String key){
         String ret;
         switch (key){
-            case "TITULO_JOG":
-                ret = getV_TITULO_JOG();
+            case "POS_JOG":
+                ret = getV_POS_JOG();
                 break;
             case "CLUBE":
                 ret = getV_CLUBE();
@@ -75,8 +75,8 @@ public class Values {
         return numberOfTemplates;
     }
 
-    public String getV_TITULO_JOG() {
-        return v_TITULO_JOG;
+    public String getV_POS_JOG() {
+        return v_POS_JOG;
     }
 
     public String getV_CLUBE() {
@@ -108,8 +108,8 @@ public class Values {
         this.v_NOME_JOG = v_NOME_JOG;
     }
 
-    public void setV_TITULO_JOG(String v_TITULO_JOG) {
-        this.v_TITULO_JOG = v_TITULO_JOG;
+    public void setV_POS_JOG(String v_TITULO_JOG) {
+        this.v_POS_JOG = v_TITULO_JOG;
     }
 
     public void setV_CLUBE(String v_CLUBE) {

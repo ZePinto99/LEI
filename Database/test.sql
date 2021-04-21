@@ -17,6 +17,6 @@ INSERT INTO template VALUES (DEFAULT, 1, 1, 34, 'O "POS_JOG" do "CLUBE" assinalo
 
 
 /**************  QUERY TESTING **************/ 
-SELECT text, keywords, id_template, size FROM template, version WHERE template.version = id_version AND version.type = 1;
+SELECT text, keywords, id_template, size FROM template, version WHERE template.versionz = id_version AND version.type = 1;
 SELECT * FROM keywords WHERE id_keywords = 1;
 INSERT INTO history VALUES (DEFAULT, NOW(), 'blablabla', 1, null, null, null, null);
