@@ -255,7 +255,7 @@ public class TemplateManager {
 
     /*
     * método que deve verificar se uma keyword deve ou não ser usada.
-    * Deve ter em conta o tipo da noticia.
+    * Deve ter em conta o tipo da noticia e o numero de vezes usada.
     * */
     public boolean checkIfUsable(Integer key, Integer size, Integer valueOfKey){
         if(valueOfKey<size)
