@@ -166,10 +166,10 @@ public class TemplateManager {
         }
         for(Integer key : keywordWithUsedTimes.keySet()){
             /*
-            * de for para não usar, metodo retorna false
+            * se for para não usar, metodo retorna false
             * */
             if(checkIfUsable(key,size, keywordWithUsedTimes.get(key)))
-                continue;
+                continue;//passa ao proximo registo
 
 
 
