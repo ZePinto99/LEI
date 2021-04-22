@@ -9,7 +9,8 @@ import java.util.*;
 public class TemplateManager {
 
 
-    private List<Integer> usedIds                        = new ArrayList<>();
+    private List<Integer> usedIds                             = new ArrayList<>();
+    private List<Integer> usedVersions                        = new ArrayList<>();
     private Values values;
     String noticia;
     int tamanho;
@@ -26,9 +27,10 @@ public class TemplateManager {
 
         noticia="";
         tamanho = 0;
-        Map<String, Integer> templatePlusKeywordsMap = new HashMap<>();
-        Map<String, Integer> templatePlusIdMap       = new HashMap<>();
-        Map<String, Integer> templatePlusSizeMap     = new HashMap<>();
+        Map<Integer, Integer> templateIdPlusKeywordsMap = new HashMap<>();
+        Map<Integer, String> templateIdPlusTemplateMap       = new HashMap<>();
+        Map<Integer, Integer> templateIdPlusSizeMap     = new HashMap<>();
+        Map<Integer, Integer> templateIdPlusVersionMap     = new HashMap<>();
 
         try {
             System.out.println("tipo: " + tipoNoticia);
@@ -40,15 +42,16 @@ public class TemplateManager {
 
             Statement select = conn.createStatement();
 
-            String sql = "SELECT text, keywords, id_template, size FROM template, version WHERE template.version = id_version AND version.type = " + tipoNoticia + ";";
+            String sql = "SELECT text, keywords, id_template, size, id_version FROM template, version WHERE template.version = id_version AND version.type = " + tipoNoticia + ";";
 
             ResultSet rs = select.executeQuery(sql);
 
             while (rs.next()) {
                 System.out.println("in");
-                templatePlusKeywordsMap.put(rs.getString(1), rs.getInt(2));
-                templatePlusIdMap.put(rs.getString(1), rs.getInt(3));
-                templatePlusSizeMap.put(rs.getString(1), rs.getInt(4));
+                templateIdPlusKeywordsMap.put(rs.getInt(3), rs.getInt(2));
+                templateIdPlusTemplateMap.put(rs.getInt(3), rs.getString(1));
+                templateIdPlusSizeMap.put(rs.getInt(3), rs.getInt(4));
+                templateIdPlusVersionMap.put(rs.getInt(3), rs.getInt(5));
             }
 
             conn.close();
@@ -58,8 +61,8 @@ public class TemplateManager {
         }
 
         //escolher 1o template
-        String template = selectTemplate(templatePlusKeywordsMap);
-        updateWithSelectedTemplate(template, templatePlusKeywordsMap,templatePlusIdMap, templatePlusSizeMap);
+        int templateId = selectTemplate(templateIdPlusKeywordsMap,templateIdPlusTemplateMap, templateIdPlusSizeMap, templateIdPlusVersionMap);
+        updateWithSelectedTemplate(templateId, templateIdPlusKeywordsMap,templateIdPlusTemplateMap, templateIdPlusSizeMap, templateIdPlusVersionMap);
 
         //chamar metodo para escolher e gerar proximos templates
         templateLoop();
@@ -70,9 +73,10 @@ public class TemplateManager {
 
     public void templateLoop(){
 
-        Map<String, Integer> templatePlusKeywordsMap = new HashMap<>();
-        Map<String, Integer> templatePlusIdMap       = new HashMap<>();
-        Map<String, Integer> templatePlusSizeMap     = new HashMap<>();
+        Map<Integer, Integer> templateIdPlusKeywordsMap = new HashMap<>();
+        Map<Integer, String> templateIdPlusTemplateMap       = new HashMap<>();
+        Map<Integer, Integer> templateIdPlusSizeMap     = new HashMap<>();
+        Map<Integer, Integer> templateIdPlusVersionMap     = new HashMap<>();
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -82,28 +86,21 @@ public class TemplateManager {
                             + "root" + "&useTimezone=true&serverTimezone=UTC");
 
             Statement select = conn.createStatement();
-            String listIds = "";
-            boolean firstTime = true;
-            for(Integer id : usedIds){
-                if(firstTime) {
-                    listIds += id;
-                    firstTime = false;
-                }
-                else
-                    listIds +="," + id;
-            }
+            String usedIdsString        = listToSqlQuery(usedIds);
+            String usedVersionsString   = listToSqlQuery(usedVersions);
 
             //adicionar filtros na query para ver keyWords relevantes
 
-            String sql = "SELECT text, keywords, size, id_template FROM template WHERE id_template NOT IN (" + listIds + ") ;";
+            String sql = "SELECT text, keywords, size, id_template, id_version FROM template WHERE id_template NOT IN (" + usedIds + ") and version NOT IN (" +usedVersionsString + ");";
 
             ResultSet rs = select.executeQuery(sql);
 
             while (rs.next()) {
                 System.out.println("in");
-                templatePlusKeywordsMap.put(rs.getString(1), rs.getInt(2));
-                templatePlusIdMap.put(rs.getString(1), rs.getInt(3));
-                templatePlusSizeMap.put(rs.getString(1), rs.getInt(4));
+                templateIdPlusKeywordsMap.put(rs.getInt(3), rs.getInt(2));
+                templateIdPlusTemplateMap.put(rs.getInt(3), rs.getString(1));
+                templateIdPlusSizeMap.put(rs.getInt(3), rs.getInt(4));
+                templateIdPlusSizeMap.put(rs.getInt(3), rs.getInt(5));
             }
 
             conn.close();
@@ -117,11 +114,11 @@ public class TemplateManager {
         boolean invalidTemplate = true;
         int attempts = 0;
         //tenta adicionar x vezes
-        while (invalidTemplate && attempts<templatePlusSizeMap.keySet().size()){
-            String template = selectTemplate(templatePlusKeywordsMap);
-            if ((templatePlusSizeMap.get(template)+tamanho) < tamanhoMax)
+        while (invalidTemplate && attempts<templateIdPlusSizeMap.keySet().size()){
+            Integer templateId = selectTemplate(templateIdPlusKeywordsMap,templateIdPlusTemplateMap,templateIdPlusSizeMap, templateIdPlusVersionMap);
+            if ((templateIdPlusSizeMap.get(templateId)+tamanho) < tamanhoMax)
                 invalidTemplate = false;
-                updateWithSelectedTemplate(template, templatePlusKeywordsMap, templatePlusIdMap, templatePlusSizeMap);
+                updateWithSelectedTemplate(templateId, templateIdPlusKeywordsMap, templateIdPlusTemplateMap, templateIdPlusSizeMap, templateIdPlusVersionMap);
         }
 
         //Temos de ver se passou do limite ou se está perto de passar
@@ -130,28 +127,42 @@ public class TemplateManager {
         }
     }
 
+    public String listToSqlQuery(List<Integer> lst){
 
-    public String selectTemplate(Map<String,Integer> templatePlusKeywordsMap){
+        String listIds = "";
+        boolean firstTime = true;
+        for(Integer id : usedIds){
+            if(firstTime) {
+                listIds += id;
+                firstTime = false;
+            }
+            else
+                listIds +="," + id;
+        }
+        return listIds;
+    }
+
+    public Integer selectTemplate(Map<Integer,Integer> templateIdPlusKeywordsMap, Map<Integer,String> templateIdPlusTemplateMap, Map<Integer,Integer> templateIdPlusSizeMap, Map<Integer,Integer> templateIdPlusVersionMap){
         //random.nextInt(max - min) + min;
         Random random = new Random();
 
-        int size = templatePlusKeywordsMap.size();
+        int size = templateIdPlusKeywordsMap.size();
         System.out.println("size:" + size);
 
         int randIndex;
         if(size == 1) randIndex = 0;
         else randIndex = random.nextInt(size - 1);
 
-        List<String> templatesList = new ArrayList<String>(templatePlusKeywordsMap.keySet());
-        String template = templatesList.get(randIndex);
+        List<Integer> templatesList = new ArrayList<Integer>(templateIdPlusTemplateMap.keySet());
+        Integer template = templatesList.get(randIndex);
 
-        return  template;
+        return template;
     }
 
 
-    public int updateWithSelectedTemplate(String template,Map<String,Integer> templatePlusKeywordsMap, Map<String,Integer> templatePlusIdMap,  Map<String,Integer> templatePlusSizeMap){
+    public int updateWithSelectedTemplate(Integer template,Map<Integer,Integer> templateIdPlusKeywordsMap, Map<Integer,String> templateIdPlusTemplateMap,  Map<Integer,Integer> templateIdPlusSizeMap, Map<Integer,Integer> templateIdPlusVersionMap){
 
-        usedIds.add(templatePlusIdMap.get(template));
+        usedIds.add(template);
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
@@ -161,7 +172,7 @@ public class TemplateManager {
 
             Statement select = conn.createStatement();
 
-            String sql = "SELECT * FROM keywords WHERE id_keywords = " + templatePlusKeywordsMap.get(template) + ";";
+            String sql = "SELECT * FROM keywords WHERE id_keywords = " + template + ";";
 
             ResultSet rs = select.executeQuery(sql);
 
@@ -175,14 +186,20 @@ public class TemplateManager {
             }
             values.addToNumberOfTemplates();
             values.setKeywords(keywordsCount);
-            noticia +=template + " ";
-            tamanho += templatePlusSizeMap.get(template);
+            noticia +=templateIdPlusTemplateMap.get(template) + " ";
+            tamanho += templateIdPlusSizeMap.get(template);
+
+            List<Integer> versions = values.getVersions();
+            versions.add(templateIdPlusVersionMap.get(template));
+            values.setVersions(versions);
+            usedVersions = versions;
+
             conn.close();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        return templatePlusSizeMap.get(template);
+        return templateIdPlusSizeMap.get(template);
     }
 
 

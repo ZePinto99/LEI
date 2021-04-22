@@ -13,6 +13,7 @@ public class Values {
     String v_RESULTADO_ESTREIA;
     List<Integer> keywords;
     Integer numberOfTemplates;
+    List<Integer> versions;
 
     public Values(){
         v_POS_JOG = "Avançado";
@@ -25,7 +26,15 @@ public class Values {
         keywords = new ArrayList<>(23);
         for (int i = 0; i<23; i++)
             keywords.add(0);
+        versions = new ArrayList<>();
         numberOfTemplates=0;
+    }
+    public void setVersions(List<Integer> ver){
+        versions= ver;
+    }
+
+    public List<Integer> getVersions(){
+        return versions;
     }
 
     public List<Integer> getKeywords(){
