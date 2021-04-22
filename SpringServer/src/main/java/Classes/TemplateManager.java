@@ -168,7 +168,7 @@ public class TemplateManager {
             /*
             * de for para não usar, metodo retorna false
             * */
-            if(checkIfUsable(key,size))
+            if(checkIfUsable(key,size, keywordWithUsedTimes.get(key)))
                 continue;
 
             if(!firsttime){
@@ -257,8 +257,8 @@ public class TemplateManager {
     * método que deve verificar se uma keyword deve ou não ser usada.
     * Deve ter em conta o tipo da noticia.
     * */
-    public boolean checkIfUsable(Integer key, Integer size){
-        if(key<size)
+    public boolean checkIfUsable(Integer key, Integer size, Integer valueOfKey){
+        if(valueOfKey<size)
             return true;
         return false;
     }
