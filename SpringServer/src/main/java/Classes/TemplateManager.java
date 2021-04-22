@@ -95,7 +95,7 @@ public class TemplateManager {
 
             int size = templateIdPlusTemplateMap.size();
 
-            String sql = "SELECT text, keywords, size, id_template, id_version FROM template WHERE id_template NOT IN (" + usedIds + ") and version NOT IN (" +usedVersionsString + ");";
+            String sql = "SELECT text, keywords, size, id_template, id_version FROM template WHERE id_template NOT IN (" + usedIds + ") and version NOT IN (" +usedVersionsString + ") " +keywordsSqlString(size) + ";";
 
             ResultSet rs = select.executeQuery(sql);
 
@@ -171,11 +171,9 @@ public class TemplateManager {
             if(checkIfUsable(key,size, keywordWithUsedTimes.get(key)))
                 continue;
 
-            if(!firsttime){
-                keywordsSql+= ", ";
-            }else{
-                firsttime= false;
-            }
+
+            keywordsSql+= ", ";
+
 
             switch (key){
                 case 0:
