@@ -13,8 +13,10 @@ public class TemplateManager {
     private List<Integer> usedVersions                        = new ArrayList<>();
     private Values values;
     String noticia;
+    String tipoNoticia;
     int tamanho;
     int tamanhoMax;
+
 
 
     public TemplateManager(){
@@ -25,12 +27,12 @@ public class TemplateManager {
 
     public String getFirstTemplate(String tipoNoticia){
 
-        noticia="";
+        noticia = "";
         tamanho = 0;
-        Map<Integer, Integer> templateIdPlusKeywordsMap = new HashMap<>();
-        Map<Integer, String> templateIdPlusTemplateMap       = new HashMap<>();
-        Map<Integer, Integer> templateIdPlusSizeMap     = new HashMap<>();
-        Map<Integer, Integer> templateIdPlusVersionMap     = new HashMap<>();
+        Map<Integer, Integer> templateIdPlusKeywordsMap         = new HashMap<>();
+        Map<Integer, String> templateIdPlusTemplateMap          = new HashMap<>();
+        Map<Integer, Integer> templateIdPlusSizeMap             = new HashMap<>();
+        Map<Integer, Integer> templateIdPlusVersionMap          = new HashMap<>();
 
         try {
             System.out.println("tipo: " + tipoNoticia);
@@ -61,7 +63,7 @@ public class TemplateManager {
         }
 
         //escolher 1o template
-        int templateId = selectTemplate(templateIdPlusKeywordsMap,templateIdPlusTemplateMap, templateIdPlusSizeMap, templateIdPlusVersionMap);
+        int templateId = selectTemplate(templateIdPlusKeywordsMap);
         updateWithSelectedTemplate(templateId, templateIdPlusKeywordsMap,templateIdPlusTemplateMap, templateIdPlusSizeMap, templateIdPlusVersionMap);
 
         //chamar metodo para escolher e gerar proximos templates
@@ -91,6 +93,8 @@ public class TemplateManager {
 
             //adicionar filtros na query para ver keyWords relevantes
 
+            int size = templateIdPlusTemplateMap.size();
+
             String sql = "SELECT text, keywords, size, id_template, id_version FROM template WHERE id_template NOT IN (" + usedIds + ") and version NOT IN (" +usedVersionsString + ");";
 
             ResultSet rs = select.executeQuery(sql);
@@ -115,7 +119,7 @@ public class TemplateManager {
         int attempts = 0;
         //tenta adicionar x vezes
         while (invalidTemplate && attempts<templateIdPlusSizeMap.keySet().size()){
-            Integer templateId = selectTemplate(templateIdPlusKeywordsMap,templateIdPlusTemplateMap,templateIdPlusSizeMap, templateIdPlusVersionMap);
+            Integer templateId = selectTemplate(templateIdPlusKeywordsMap);
             if ((templateIdPlusSizeMap.get(templateId)+tamanho) < tamanhoMax)
                 invalidTemplate = false;
                 updateWithSelectedTemplate(templateId, templateIdPlusKeywordsMap, templateIdPlusTemplateMap, templateIdPlusSizeMap, templateIdPlusVersionMap);
@@ -127,6 +131,9 @@ public class TemplateManager {
         }
     }
 
+    /*
+    * método para passar lista de Integer para formato SQL
+    * */
     public String listToSqlQuery(List<Integer> lst){
 
         String listIds = "";
@@ -142,7 +149,121 @@ public class TemplateManager {
         return listIds;
     }
 
-    public Integer selectTemplate(Map<Integer,Integer> templateIdPlusKeywordsMap, Map<Integer,String> templateIdPlusTemplateMap, Map<Integer,Integer> templateIdPlusSizeMap, Map<Integer,Integer> templateIdPlusVersionMap){
+    /*
+    * método que deve retornar, em formato de sql, os campos da tabela keywords que NÃO devem fazer parte do
+    * próximo template a ser selecionado
+    * */
+    public String keywordsSqlString(int size){
+        String keywordsSql = "";
+        int contains = 0;
+        boolean firsttime = true;
+        List<Integer> keySize = values.getKeywords();
+        Map<Integer,Integer> keywordWithUsedTimes = new HashMap<Integer, Integer>();
+        int num = 0;
+        for(Integer key : keySize) {
+            keywordWithUsedTimes.put(num,key);
+            num++;
+        }
+        for(Integer key : keywordWithUsedTimes.keySet()){
+            /*
+            * de for para não usar, metodo retorna false
+            * */
+            if(checkIfUsable(key,size))
+                continue;
+
+            if(!firsttime){
+                keywordsSql+= ", ";
+            }else{
+                firsttime= false;
+            }
+
+            switch (key){
+                case 0:
+                    keywordsSql += "Nome_JOG = 0 ";
+                    break;
+                case 1:
+                    keywordsSql += "Idade_JOG = 0 ";
+                    break;
+                case 2:
+                    keywordsSql += "POS_JOG = 0 ";
+                    break;
+                case 3:
+                    keywordsSql += "NR_GOLOS_JOG = 0 ";
+                    break;
+                case 4:
+                    keywordsSql += "NR_JOGOS_JOG = 0 ";
+                    break;
+                case 5:
+                    keywordsSql += "CLUBE = 0 ";
+                    break;
+                case 6:
+                    keywordsSql += "COMPETICAO = 0 ";
+                    break;
+                case 7:
+                    keywordsSql += "TREINADOR = 0 ";
+                    break;
+                case 8:
+                    keywordsSql += "ARBITRO = 0 ";
+                    break;
+                case 9:
+                    keywordsSql += "JORNADA = 0 ";
+                    break;
+                case 10:
+                    keywordsSql += "RESULTADO_JORNADA = 0 ";
+                    break;
+                case 11:
+                    keywordsSql += "CASA/FORA = 0 ";
+                    break;
+                case 12:
+                    keywordsSql += "ADVERSARIO = 0 ";
+                    break;
+                case 13:
+                    keywordsSql += "MARCADOR_JORNADA = 0 ";
+                    break;
+                case 14:
+                    keywordsSql += "ESTREIA_JOG = 0 ";
+                    break;
+                case 15:
+                    keywordsSql += "NR_JOGOS_INV = 0 ";
+                    break;
+                case 16:
+                    keywordsSql += "NR_GOLOS_JOG_JR = 0 ";
+                    break;
+                case 17:
+                    keywordsSql += "NR_JOGOS_SGOLOS_JOG = 0 ";
+                    break;
+                case 18:
+                    keywordsSql += "EX_TREINADOR = 0 ";
+                    break;
+                case 19:
+                    keywordsSql += "NOME_TOP = 0 ";
+                    break;
+                case 20:
+                    keywordsSql += "NR_JOGOS_TOP = 0 ";
+                    break;
+                case 21:
+                    keywordsSql += "NAC_TOP_JOG = 0 ";
+                    break;
+                case 22:
+                    keywordsSql += "NR_GOLOS_TOP = 0 ";
+                    break;
+            }
+
+        }
+        return keywordsSql;
+    }
+
+    /*
+    * método que deve verificar se uma keyword deve ou não ser usada.
+    * Deve ter em conta o tipo da noticia.
+    * */
+    public boolean checkIfUsable(Integer key, Integer size){
+        if(key<size)
+            return true;
+        return false;
+    }
+
+    public Integer selectTemplate(Map<Integer,Integer> templateIdPlusKeywordsMap){
         //random.nextInt(max - min) + min;
         Random random = new Random();
 
@@ -153,7 +274,7 @@ public class TemplateManager {
         if(size == 1) randIndex = 0;
         else randIndex = random.nextInt(size - 1);
 
-        List<Integer> templatesList = new ArrayList<Integer>(templateIdPlusTemplateMap.keySet());
+        List<Integer> templatesList = new ArrayList<Integer>(templateIdPlusKeywordsMap.keySet());
         Integer template = templatesList.get(randIndex);
 
         return template;
@@ -189,9 +310,11 @@ public class TemplateManager {
             noticia +=templateIdPlusTemplateMap.get(template) + " ";
             tamanho += templateIdPlusSizeMap.get(template);
 
+            // proximas 3 linhas, são necessárias?
             List<Integer> versions = values.getVersions();
             versions.add(templateIdPlusVersionMap.get(template));
             values.setVersions(versions);
+
             usedVersions = versions;
 
             conn.close();
