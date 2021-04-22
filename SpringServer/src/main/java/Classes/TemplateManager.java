@@ -95,7 +95,7 @@ public class TemplateManager {
 
             int size = templateIdPlusTemplateMap.size();
 
-            String sql = "SELECT text, keywords, size, id_template, id_version FROM template WHERE id_template NOT IN (" + usedIds + ") and version NOT IN (" +usedVersionsString + ") " +keywordsSqlString(size) + ";";
+            String sql = "SELECT text, keywords, size, id_template, id_version FROM template, keywords WHERE id_template NOT IN (" + usedIds + ") and version NOT IN (" +usedVersionsString + ") and template.keywords = id_keywords " +keywordsSqlString(size) + ";";
 
             ResultSet rs = select.executeQuery(sql);
 
