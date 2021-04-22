@@ -172,7 +172,9 @@ public class TemplateManager {
                 continue;
 
 
-            keywordsSql+= ", ";
+
+
+            keywordsSql+= "and ";
 
 
             switch (key){
