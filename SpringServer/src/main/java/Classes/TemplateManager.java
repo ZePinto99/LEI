@@ -182,7 +182,7 @@ public class TemplateManager {
                     keywordsSql += "Nome_JOG = 0 ";
                     break;
                 case 1:
-                    keywordsSql += "Idade_JOG = 0 ";
+                    keywordsSql += "IDADE_JOG = 0 ";
                     break;
                 case 2:
                     keywordsSql += "POS_JOG = 0 ";
