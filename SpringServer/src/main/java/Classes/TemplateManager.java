@@ -13,7 +13,6 @@ public class TemplateManager {
     private List<Integer> usedVersions                        = new ArrayList<>();
     private Values values;
     String noticia;
-    String tipoNoticia;
     int tamanho;
     int tamanhoMax;
 
@@ -95,7 +94,7 @@ public class TemplateManager {
 
             int size = templateIdPlusTemplateMap.size();
 
-            String sql = "SELECT text, keywords, size, id_template, id_version FROM template, keywords WHERE id_template NOT IN (" + usedIds + ") and version NOT IN (" +usedVersionsString + ") and template.keywords = id_keywords " +keywordsSqlString(size) + ";";
+            String sql = "SELECT text, keywords, size, id_template, id_version FROM template, keywords WHERE primary = 0 and id_template NOT IN (" + usedIdsString + ") and version NOT IN (" +usedVersionsString + ") and template.keywords = id_keywords " +keywordsSqlString(size) + ";";
 
             ResultSet rs = select.executeQuery(sql);
 
@@ -155,8 +154,6 @@ public class TemplateManager {
     * */
     public String keywordsSqlString(int size){
         String keywordsSql = "";
-        int contains = 0;
-        boolean firsttime = true;
         List<Integer> keySize = values.getKeywords();
         Map<Integer,Integer> keywordWithUsedTimes = new HashMap<Integer, Integer>();
         int num = 0;
@@ -246,6 +243,12 @@ public class TemplateManager {
                     break;
                 case 22:
                     keywordsSql += "NR_GOLOS_TOP = 0 ";
+                    break;
+                case 23:
+                    keywordsSql += "NR_GOLOS_JOG_TOTAL = 0 ";
+                    break;
+                case 24:
+                    keywordsSql += "NR_JOGOS_JOG_TOTAL = 0 ";
                     break;
             }
 
