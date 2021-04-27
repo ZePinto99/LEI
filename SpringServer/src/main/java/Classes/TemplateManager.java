@@ -75,9 +75,9 @@ public class TemplateManager {
     public void templateLoop(){
 
         Map<Integer, Integer> templateIdPlusKeywordsMap = new HashMap<>();
-        Map<Integer, String> templateIdPlusTemplateMap       = new HashMap<>();
+        Map<Integer, String> templateIdPlusTemplateMap  = new HashMap<>();
         Map<Integer, Integer> templateIdPlusSizeMap     = new HashMap<>();
-        Map<Integer, Integer> templateIdPlusVersionMap     = new HashMap<>();
+        Map<Integer, Integer> templateIdPlusVersionMap  = new HashMap<>();
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -266,6 +266,9 @@ public class TemplateManager {
         return false;
     }
 
+    /*
+    * método que atribui uma probabilidade aleatória a um template de ser escolhido
+    * */
     public Integer selectTemplate(Map<Integer,Integer> templateIdPlusKeywordsMap){
         //random.nextInt(max - min) + min;
         Random random = new Random();
@@ -283,6 +286,46 @@ public class TemplateManager {
         return template;
     }
 
+    /*
+     * método que atribui uma probabilidade a um template ser escolhido com base nas keywords já usadas, classificação e nrº de utiliziações
+     * */
+    //Estou a assumir que recebo um map com o as keywords e as vezes que aparecem na notícia
+    public Integer selectTemplateWithScore(Map<Integer,Integer> templateIdPlusKeywordsMap, Map<String, Integer> keywordsAlreadyUsed){
+
+        //random.nextInt(max - min) + min;
+        //Probabilidade que os templates têm de bater
+        /////////Temos de ver qual prob funciona melhor aqui!!!//////////
+        Random random = new Random();
+        double randProb = random.nextInt(1);
+
+        //Criamos o Activator com o valor da constante
+        Activator activator = new Activator(100);
+
+        double max = 0;
+        int maxTmpId = 0;
+        int limitOfTries = templateIdPlusKeywordsMap.keySet().size(); //É preciso ver que número podemos meter aqui
+        int iteration = 0;
+
+        while (iteration < limitOfTries) {
+            //Selecionamos um template aleatório
+            int templateIndex = selectTemplate(templateIdPlusKeywordsMap);
+            List<String> templateKeywords = new ArrayList<>(); //É PRECISO IR BUSCAR AS KEYWORDS DO TEMPLATE//
+
+            //Calculamos a probabilidade do template ser selecionado com base nas suas keywords
+            //recebe a lista de keywords do template e keywords já usadas na notícia
+            double templateProb = activator.chooseTemp(templateKeywords ,keywordsAlreadyUsed);
+
+            if (templateProb> randProb)
+                return templateIndex;
+
+            if (templateProb > max){
+                max     = templateProb;
+                maxTmpId = templateIndex;
+            }
+        }
+
+        return maxTmpId;
+    }
 
     public int updateWithSelectedTemplate(Integer template,Map<Integer,Integer> templateIdPlusKeywordsMap, Map<Integer,String> templateIdPlusTemplateMap,  Map<Integer,Integer> templateIdPlusSizeMap, Map<Integer,Integer> templateIdPlusVersionMap){
 
@@ -296,7 +339,7 @@ public class TemplateManager {
 
             Statement select = conn.createStatement();
 
-            String sql = "SELECT * FROM keywords WHERE id_keywords = " + template + ";";
+            String sql = "SELECT * FROM keywords WHERE id_keywords = " + templateIdPlusKeywordsMap.get(template) + ";";
 
             ResultSet rs = select.executeQuery(sql);
 
