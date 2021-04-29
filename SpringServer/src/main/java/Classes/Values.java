@@ -11,9 +11,10 @@ public class Values {
     String v_ESTREIA_JOG;
     String v_ADVERSARIO;
     String v_RESULTADO_ESTREIA;
-    List<Integer> keywords;
-    Integer numberOfTemplates;
+    List<Integer> keywords;      //devíamos trocar esta lista para um map Map<String, Integer>
+    Integer numberOfTemplates;   //e receber as keywords e possívelmente outros parâmetros através de um ficheiro txt ou algo do tipo
     List<Integer> versions;
+    int nrOfKeywords = 28;
 
     public Values(){
         v_POS_JOG = "Avançado";
@@ -23,8 +24,8 @@ public class Values {
         v_ESTREIA_JOG = "30 de fevereiro";
         v_ADVERSARIO = "Real Madrid";
         v_RESULTADO_ESTREIA = "10-0";
-        keywords = new ArrayList<>(23);
-        for (int i = 0; i<23; i++)
+        keywords = new ArrayList<>(nrOfKeywords);
+        for (int i = 0; i<nrOfKeywords; i++)
             keywords.add(0);
         versions = new ArrayList<>();
         numberOfTemplates=0;

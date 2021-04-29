@@ -112,13 +112,15 @@ public class TemplateManager {
             System.out.println(e.getMessage());
         }
 
-        //escolher template da lista selecionada
-        //escolhe template o template se este não passar do limite
         boolean invalidTemplate = true;
         int attempts = 0;
+
+        //vai buscar um map com as keywords e o número de vezes que foram utilizadas
+        Map<String, Integer> keywordsAlreadyUsed = newsKeywords2Map();
+
         //tenta adicionar x vezes
         while (invalidTemplate && attempts<templateIdPlusSizeMap.keySet().size()){
-            Integer templateId = selectTemplate(templateIdPlusKeywordsMap);
+            int templateId = selectTemplateWithScore(templateIdPlusKeywordsMap, keywordsAlreadyUsed);
             if ((templateIdPlusSizeMap.get(templateId)+tamanho) < tamanhoMax)
                 invalidTemplate = false;
                 updateWithSelectedTemplate(templateId, templateIdPlusKeywordsMap, templateIdPlusTemplateMap, templateIdPlusSizeMap, templateIdPlusVersionMap);
@@ -309,11 +311,15 @@ public class TemplateManager {
         while (iteration < limitOfTries) {
             //Selecionamos um template aleatório
             int templateIndex = selectTemplate(templateIdPlusKeywordsMap);
+
+            /////////////////////// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ////////////////////////
+            /////////////////////// É preciso ver o que templateIdPlusKeywordsMap devolve ////////////////////////
+            /////////////////////// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ////////////////////////
             List<String> templateKeywords = new ArrayList<>(); //É PRECISO IR BUSCAR AS KEYWORDS DO TEMPLATE//
 
-            //Calculamos a probabilidade do template ser selecionado com base nas suas keywords
+            //Calculamos o score para o template ser selecionado com base nas suas keywords
             //recebe a lista de keywords do template e keywords já usadas na notícia
-            double templateProb = activator.chooseTemp(templateKeywords ,keywordsAlreadyUsed);
+            double templateProb = activator.tempScore(templateKeywords ,keywordsAlreadyUsed);
 
             if (templateProb> randProb)
                 return templateIndex;
@@ -325,6 +331,98 @@ public class TemplateManager {
         }
 
         return maxTmpId;
+    }
+
+    private Map<String, Integer> newsKeywords2Map(){
+        Map<String, Integer> newsKeywords = new HashMap<>();
+        String keyword = "";
+        int repeticion = 0;
+        for(int i = 0; i<values.nrOfKeywords; i++) {
+            repeticion = values.keywords.get(i);
+            if (repeticion > 0){
+                switch (i){
+                    case 0:
+                        keyword =  "Nome_JOG";
+                        break;
+                    case 1:
+                        keyword =  "IDADE_JOG";
+                        break;
+                    case 2:
+                        keyword =  "POS_JOG";
+                        break;
+                    case 3:
+                        keyword =  "NR_GOLOS_JOG";
+                        break;
+                    case 4:
+                        keyword =  "NR_JOGOS_JOG";
+                        break;
+                    case 5:
+                        keyword =  "CLUBE";
+                        break;
+                    case 6:
+                        keyword =  "COMPETICAO";
+                        break;
+                    case 7:
+                        keyword =  "TREINADOR";
+                        break;
+                    case 8:
+                        keyword =  "ARBITRO";
+                        break;
+                    case 9:
+                        keyword =  "JORNADA";
+                        break;
+                    case 10:
+                        keyword =  "RESULTADO_JORNADA";
+                        break;
+                    case 11:
+                        keyword =  "CASA/FORA";
+                        break;
+                    case 12:
+                        keyword =  "ADVERSARIO";
+                        break;
+                    case 13:
+                        keyword =  "MARCADOR_JORNADA";
+                        break;
+                    case 14:
+                        keyword =  "ESTREIA_JOG";
+                        break;
+                    case 15:
+                        keyword =  "NR_JOGOS_INV";
+                        break;
+                    case 16:
+                        keyword =  "NR_GOLOS_JOG_JR";
+                        break;
+                    case 17:
+                        keyword =  "NR_JOGOS_SGOLOS_JOG";
+                        break;
+                    case 18:
+                        keyword =  "EX_TREINADOR";
+                        break;
+                    case 19:
+                        keyword =  "NOME_TOP";
+                        break;
+                    case 20:
+                        keyword =  "NR_JOGOS_TOP ";
+                        break;
+                    case 21:
+                        keyword =  "NAC_TOP_JOG";
+                        break;
+                    case 22:
+                        keyword =  "NR_GOLOS_TOP";
+                        break;
+                    case 23:
+                        keyword =  "NR_GOLOS_JOG_TOTAL";
+                        break;
+                    case 24:
+                        keyword =  "NR_JOGOS_JOG_TOTAL";
+                        break;
+                    default:
+                        keyword = "MISSING_KEYWORD";
+                }
+            }
+            newsKeywords.put(keyword, repeticion);
+        }
+        return newsKeywords;
     }
 
     public int updateWithSelectedTemplate(Integer template,Map<Integer,Integer> templateIdPlusKeywordsMap, Map<Integer,String> templateIdPlusTemplateMap,  Map<Integer,Integer> templateIdPlusSizeMap, Map<Integer,Integer> templateIdPlusVersionMap){

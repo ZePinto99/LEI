@@ -1,6 +1,8 @@
 package Classes;
 import java.lang.Math;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Activator {
     private double e;
@@ -11,30 +13,52 @@ public class Activator {
         e = 2.2204460492503130808472633361816;
     }
 
-    //O que retorna?
-    public double chooseTemp(List<String> templateKeywords, Map<String, Integer> newsKeywords){
+    //função que calcula o score de um template
+    public double tempScore(List<String> templateKeywords, Map<String, Integer> newsKeywords){
         int score = 0;
+
+        //set de priority keywords da notícia (todas as priority keywords diferentes de cada keyword da notícia final
+        Set priorityKeywordsSet =  priorityKeywordsSet(newsKeywords.keySet());
 
         for(String templateKeyword :  templateKeywords){
 
-            int occurrences = Collections.frequency(newsKeywords.keySet(), templateKeyword);
+            int occurrences = 0;
+            //Vai ver quantas vezes a a templateKeyword aparece no final
+            if(newsKeywords.containsKey(templateKeyword))
+                occurrences = newsKeywords.get(templateKeyword);
             score -= constant*occurrences;
 
+            //Vai ver se a templateKeyword é uma priority keyword
+            //nota: cada priority keyword só é contabilizada 1 vez
             score += priorityScore(templateKeyword, newsKeywords.keySet());
             }
 
+        //devolve um score/probabilidade entre 0 e 1
         double activationValue = sigmoid(score);
 
         return activationValue;
     }
 
-    public int priorityScore(String templateKeyword, Set<String> newsKeywords){
-        //acede a um ficheiro com as prioritykeys de cada keyword
-        //Ver quais são as prioridades da lista keywordsUsed
-        List<String> priorykeys = new ArrayList<>(); //Temos de ir buscar as priority keywords de todas as keywords do template
+    //Função que cria um Set com todas as as priority keywords da notícia
+    private Set<String> priorityKeywordsSet(Set<String> newsKeywords){
+        //Escolhi um set para só contabilizarmos uma vez cada priority key
+        Set<String> prioritykeys = new HashSet<>();
 
-        int occurrences = Collections.frequency(newsKeywords, templateKeyword);
-        return constant*occurrences;
+        for (String newsKeyword : newsKeywords){
+            /////////////////////// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ////////////////////////
+            //Temos de ir buscar as priority keywords de cada keyword do template
+            List<String> prioritykey = new ArrayList<>();
+            /////////////////////// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ////////////////////////
+            prioritykeys.addAll(prioritykey);
+        }
+        return prioritykeys;
+    }
+
+    public int priorityScore(String templateKeyword, Set<String> priorykeys){
+        int occures = 0;
+        if(priorykeys.contains(templateKeyword))
+            occures = 1;
+        return constant*occures;
     }
 
     public double sigmoid(int score){
