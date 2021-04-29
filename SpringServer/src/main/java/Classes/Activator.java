@@ -17,20 +17,23 @@ public class Activator {
     public double tempScore(List<String> templateKeywords, Map<String, Integer> newsKeywords){
         int score = 0;
 
-        //set de priority keywords da notícia (todas as priority keywords diferentes de cada keyword da notícia final
+        //set de priority keywords da notícia (todas as priority keywords diferentes de cada keyword da notícia final)
         Set priorityKeywordsSet =  priorityKeywordsSet(newsKeywords.keySet());
 
+        //para cada keyword do template
         for(String templateKeyword :  templateKeywords){
 
             int occurrences = 0;
-            //Vai ver quantas vezes a a templateKeyword aparece no final
+            //Vai ver quantas vezes a a templateKeyword aparece na notícia final
             if(newsKeywords.containsKey(templateKeyword))
                 occurrences = newsKeywords.get(templateKeyword);
+            //penaliza a keyword por cada repetição
             score -= constant*occurrences;
 
             //Vai ver se a templateKeyword é uma priority keyword
             //nota: cada priority keyword só é contabilizada 1 vez
-            score += priorityScore(templateKeyword, newsKeywords.keySet());
+            //aumenta o score caso se tarte de uma priority keyword
+            score += priorityScore(templateKeyword, priorityKeywordsSet);
             }
 
         //devolve um score/probabilidade entre 0 e 1
@@ -54,6 +57,7 @@ public class Activator {
         return prioritykeys;
     }
 
+    //Dá zero se templateKeyword não for priority e constant se for
     public int priorityScore(String templateKeyword, Set<String> priorykeys){
         int occures = 0;
         if(priorykeys.contains(templateKeyword))
@@ -61,6 +65,7 @@ public class Activator {
         return constant*occures;
     }
 
+    //Função que dado um número retorna um valor entre 0 e 1
     public double sigmoid(int score){
         double x = (score)*0.1; // +feedBack -> + prob   +nrUses -> - prob
         return 1/(1 + Math.pow(this.e, -x));

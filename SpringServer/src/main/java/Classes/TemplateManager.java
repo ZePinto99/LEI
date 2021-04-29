@@ -17,7 +17,6 @@ public class TemplateManager {
     int tamanhoMax;
 
 
-
     public TemplateManager(){
         values = new Values();
         tamanhoMax = 100;
@@ -116,14 +115,17 @@ public class TemplateManager {
         int attempts = 0;
 
         //vai buscar um map com as keywords e o número de vezes que foram utilizadas
-        Map<String, Integer> keywordsAlreadyUsed = newsKeywords2Map();
+        Map<String, Integer> keywordsAlreadyUsed = values.keywords;
 
         //tenta adicionar x vezes
         while (invalidTemplate && attempts<templateIdPlusSizeMap.keySet().size()){
-            int templateId = selectTemplateWithScore(templateIdPlusKeywordsMap, keywordsAlreadyUsed);
-            if ((templateIdPlusSizeMap.get(templateId)+tamanho) < tamanhoMax)
+            int templateId = selectTemplateWithScore(templateIdPlusKeywordsMap, keywordsAlreadyUsed, templateIdPlusSizeMap);
+            //Se o templateId estiver a -1 significa que não foi possível adicionar qualquer template
+            if (templateId != -1) {
+                //caso o id seja diferente -1 significa que encontramos o nosso novo template
                 invalidTemplate = false;
                 updateWithSelectedTemplate(templateId, templateIdPlusKeywordsMap, templateIdPlusTemplateMap, templateIdPlusSizeMap, templateIdPlusVersionMap);
+            }
         }
 
         //Temos de ver se passou do limite ou se está perto de passar
@@ -156,103 +158,18 @@ public class TemplateManager {
     * */
     public String keywordsSqlString(int size){
         String keywordsSql = "";
-        List<Integer> keySize = values.getKeywords();
-        Map<Integer,Integer> keywordWithUsedTimes = new HashMap<Integer, Integer>();
-        int num = 0;
-        for(Integer key : keySize) {
-            keywordWithUsedTimes.put(num,key);
-            num++;
-        }
-        for(Integer key : keywordWithUsedTimes.keySet()){
+        Map<String, Integer> keywordsMap = values.getKeywords();
+
+        for(String key : keywordsMap.keySet()){
             /*
             * se for para não usar, metodo retorna false
             * */
-            if(checkIfUsable(key,size, keywordWithUsedTimes.get(key)))
+            if(checkIfUsable(key,size, keywordsMap.get(key)))
                 continue;//passa ao proximo registo
-
-
-
 
             keywordsSql+= "and ";
 
-
-            switch (key){
-                case 0:
-                    keywordsSql += "Nome_JOG = 0 ";
-                    break;
-                case 1:
-                    keywordsSql += "IDADE_JOG = 0 ";
-                    break;
-                case 2:
-                    keywordsSql += "POS_JOG = 0 ";
-                    break;
-                case 3:
-                    keywordsSql += "NR_GOLOS_JOG = 0 ";
-                    break;
-                case 4:
-                    keywordsSql += "NR_JOGOS_JOG = 0 ";
-                    break;
-                case 5:
-                    keywordsSql += "CLUBE = 0 ";
-                    break;
-                case 6:
-                    keywordsSql += "COMPETICAO = 0 ";
-                    break;
-                case 7:
-                    keywordsSql += "TREINADOR = 0 ";
-                    break;
-                case 8:
-                    keywordsSql += "ARBITRO = 0 ";
-                    break;
-                case 9:
-                    keywordsSql += "JORNADA = 0 ";
-                    break;
-                case 10:
-                    keywordsSql += "RESULTADO_JORNADA = 0 ";
-                    break;
-                case 11:
-                    keywordsSql += "CASA/FORA = 0 ";
-                    break;
-                case 12:
-                    keywordsSql += "ADVERSARIO = 0 ";
-                    break;
-                case 13:
-                    keywordsSql += "MARCADOR_JORNADA = 0 ";
-                    break;
-                case 14:
-                    keywordsSql += "ESTREIA_JOG = 0 ";
-                    break;
-                case 15:
-                    keywordsSql += "NR_JOGOS_INV = 0 ";
-                    break;
-                case 16:
-                    keywordsSql += "NR_GOLOS_JOG_JR = 0 ";
-                    break;
-                case 17:
-                    keywordsSql += "NR_JOGOS_SGOLOS_JOG = 0 ";
-                    break;
-                case 18:
-                    keywordsSql += "EX_TREINADOR = 0 ";
-                    break;
-                case 19:
-                    keywordsSql += "NOME_TOP = 0 ";
-                    break;
-                case 20:
-                    keywordsSql += "NR_JOGOS_TOP = 0 ";
-                    break;
-                case 21:
-                    keywordsSql += "NAC_TOP_JOG = 0 ";
-                    break;
-                case 22:
-                    keywordsSql += "NR_GOLOS_TOP = 0 ";
-                    break;
-                case 23:
-                    keywordsSql += "NR_GOLOS_JOG_TOTAL = 0 ";
-                    break;
-                case 24:
-                    keywordsSql += "NR_JOGOS_JOG_TOTAL = 0 ";
-                    break;
-            }
+            keywordsSql += key + " = 0 ";
 
         }
         return keywordsSql;
@@ -262,7 +179,8 @@ public class TemplateManager {
     * método que deve verificar se uma keyword deve ou não ser usada.
     * Deve ter em conta o tipo da noticia e o numero de vezes usada.
     * */
-    public boolean checkIfUsable(Integer key, Integer size, Integer valueOfKey){
+    //Está a receber a keyword, o size que é passado como input em keywordsSqlString e o número de vezes que a keyword se repete
+    public boolean checkIfUsable(String key, int size, int valueOfKey){
         if(valueOfKey<size)
             return true;
         return false;
@@ -289,22 +207,25 @@ public class TemplateManager {
     }
 
     /*
-     * método que atribui uma probabilidade a um template ser escolhido com base nas keywords já usadas, classificação e nrº de utiliziações
+     * método que seleciona um template com base nas keywords já usadas, classificação e nrº de utiliziações
      * */
-    //Estou a assumir que recebo um map com o as keywords e as vezes que aparecem na notícia
-    public Integer selectTemplateWithScore(Map<Integer,Integer> templateIdPlusKeywordsMap, Map<String, Integer> keywordsAlreadyUsed){
+    public Integer selectTemplateWithScore(Map<Integer,Integer> templateIdPlusKeywordsMap, Map<String, Integer> keywordsAlreadyUsed, Map<Integer, Integer> templateIdPlusSizeMap){
 
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //random.nextInt(max - min) + min;
-        //Probabilidade que os templates têm de bater
-        /////////Temos de ver qual prob funciona melhor aqui!!!//////////
+        //Score/Probabilidade que os templates têm de bater (o facto de ser aleatória significa que todos os templates podem aparecer
+        //                                                   mas quanto maior for o score do template maior a probabilidade de ser escolhido)
+        // nota: Existe um problema com esta abordagem. Se tivermos um randProb muito alto podemos não conseguir escolher nenhum template.
+        //       Para resolver isto temos um max e maxTmpId que vão armazenado o template com melhor score
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         Random random = new Random();
         double randProb = random.nextInt(1);
 
         //Criamos o Activator com o valor da constante
         Activator activator = new Activator(100);
 
-        double max = 0;
-        int maxTmpId = 0;
+        double max = -1;
+        int maxTmpId = -1;
         int limitOfTries = templateIdPlusKeywordsMap.keySet().size(); //É preciso ver que número podemos meter aqui
         int iteration = 0;
 
@@ -315,114 +236,24 @@ public class TemplateManager {
             /////////////////////// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ////////////////////////
             /////////////////////// É preciso ver o que templateIdPlusKeywordsMap devolve ////////////////////////
             /////////////////////// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ////////////////////////
-            List<String> templateKeywords = new ArrayList<>(); //É PRECISO IR BUSCAR AS KEYWORDS DO TEMPLATE//
+            List<String> templateKeywords = new ArrayList<>(); //!!!É PRECISO IR BUSCAR AS KEYWORDS DO TEMPLATE!!!//
 
             //Calculamos o score para o template ser selecionado com base nas suas keywords
             //recebe a lista de keywords do template e keywords já usadas na notícia
             double templateProb = activator.tempScore(templateKeywords ,keywordsAlreadyUsed);
-
-            if (templateProb> randProb)
+            //Se o score do template bater o randProb e o tamanho do template for válido o template é logo selecionado
+            if (templateProb> randProb && (templateIdPlusSizeMap.get(templateIndex)+tamanho) < tamanhoMax)
                 return templateIndex;
 
-            if (templateProb > max){
+            //Se o score não chegar para bater o randProb, mas se for o template com score mais alto é guardado
+            if (templateProb > max && (templateIdPlusSizeMap.get(templateIndex)+tamanho) < tamanhoMax){
                 max     = templateProb;
                 maxTmpId = templateIndex;
             }
-        }
 
+        }
+        //retornamos o template com maior score
         return maxTmpId;
-    }
-
-    private Map<String, Integer> newsKeywords2Map(){
-        Map<String, Integer> newsKeywords = new HashMap<>();
-        String keyword = "";
-        int repeticion = 0;
-        for(int i = 0; i<values.nrOfKeywords; i++) {
-            repeticion = values.keywords.get(i);
-            if (repeticion > 0){
-                switch (i){
-                    case 0:
-                        keyword =  "Nome_JOG";
-                        break;
-                    case 1:
-                        keyword =  "IDADE_JOG";
-                        break;
-                    case 2:
-                        keyword =  "POS_JOG";
-                        break;
-                    case 3:
-                        keyword =  "NR_GOLOS_JOG";
-                        break;
-                    case 4:
-                        keyword =  "NR_JOGOS_JOG";
-                        break;
-                    case 5:
-                        keyword =  "CLUBE";
-                        break;
-                    case 6:
-                        keyword =  "COMPETICAO";
-                        break;
-                    case 7:
-                        keyword =  "TREINADOR";
-                        break;
-                    case 8:
-                        keyword =  "ARBITRO";
-                        break;
-                    case 9:
-                        keyword =  "JORNADA";
-                        break;
-                    case 10:
-                        keyword =  "RESULTADO_JORNADA";
-                        break;
-                    case 11:
-                        keyword =  "CASA/FORA";
-                        break;
-                    case 12:
-                        keyword =  "ADVERSARIO";
-                        break;
-                    case 13:
-                        keyword =  "MARCADOR_JORNADA";
-                        break;
-                    case 14:
-                        keyword =  "ESTREIA_JOG";
-                        break;
-                    case 15:
-                        keyword =  "NR_JOGOS_INV";
-                        break;
-                    case 16:
-                        keyword =  "NR_GOLOS_JOG_JR";
-                        break;
-                    case 17:
-                        keyword =  "NR_JOGOS_SGOLOS_JOG";
-                        break;
-                    case 18:
-                        keyword =  "EX_TREINADOR";
-                        break;
-                    case 19:
-                        keyword =  "NOME_TOP";
-                        break;
-                    case 20:
-                        keyword =  "NR_JOGOS_TOP ";
-                        break;
-                    case 21:
-                        keyword =  "NAC_TOP_JOG";
-                        break;
-                    case 22:
-                        keyword =  "NR_GOLOS_TOP";
-                        break;
-                    case 23:
-                        keyword =  "NR_GOLOS_JOG_TOTAL";
-                        break;
-                    case 24:
-                        keyword =  "NR_JOGOS_JOG_TOTAL";
-                        break;
-                    default:
-                        keyword = "MISSING_KEYWORD";
-                }
-            }
-            newsKeywords.put(keyword, repeticion);
-        }
-        return newsKeywords;
     }
 
     public int updateWithSelectedTemplate(Integer template,Map<Integer,Integer> templateIdPlusKeywordsMap, Map<Integer,String> templateIdPlusTemplateMap,  Map<Integer,Integer> templateIdPlusSizeMap, Map<Integer,Integer> templateIdPlusVersionMap){
@@ -441,12 +272,13 @@ public class TemplateManager {
 
             ResultSet rs = select.executeQuery(sql);
 
-            List<Integer> keywordsCount = values.getKeywords();
+            Map<String, Integer> keywordsCount = values.getKeywords();
 
             while (rs.next()) {
-                for (int count = 0; count < 23; count++){
-
-                    keywordsCount.set(count, rs.getInt(count+1)+keywordsCount.get(count));
+                int i = 0;
+                for (String key : keywordsCount.keySet()){
+                    keywordsCount.put(key, rs.getInt(i+1)+keywordsCount.get(key));
+                    i++;
                 }
             }
             values.addToNumberOfTemplates();

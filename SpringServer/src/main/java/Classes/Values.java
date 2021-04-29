@@ -1,7 +1,8 @@
 package Classes;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class Values {
     String v_NOME_JOG;
@@ -11,10 +12,9 @@ public class Values {
     String v_ESTREIA_JOG;
     String v_ADVERSARIO;
     String v_RESULTADO_ESTREIA;
-    List<Integer> keywords;      //devíamos trocar esta lista para um map Map<String, Integer>
-    Integer numberOfTemplates;   //e receber as keywords e possívelmente outros parâmetros através de um ficheiro txt ou algo do tipo
+    Map<String, Integer> keywords;  //Passou de List<String> para Map<keyword, nrº de repetições>
+    Integer numberOfTemplates;
     List<Integer> versions;
-    int nrOfKeywords = 28;
 
     public Values(){
         v_POS_JOG = "Avançado";
@@ -24,9 +24,9 @@ public class Values {
         v_ESTREIA_JOG = "30 de fevereiro";
         v_ADVERSARIO = "Real Madrid";
         v_RESULTADO_ESTREIA = "10-0";
-        keywords = new ArrayList<>(nrOfKeywords);
-        for (int i = 0; i<nrOfKeywords; i++)
-            keywords.add(0);
+        //Só para teste temos de ir buscar à bd  NOTA: O MAP DEVE ESTAR NA MESMA ORDEM QUE A BD!!!!
+        List<String> keywordsList = Arrays.asList("POS_JOG", "CLUBE", "NR_JOGOS_JOG");
+        keywords = keywordsList.stream().collect(Collectors.toMap(Function.identity(), i -> 0));
         versions = new ArrayList<>();
         numberOfTemplates=0;
     }
@@ -38,7 +38,7 @@ public class Values {
         return versions;
     }
 
-    public List<Integer> getKeywords(){
+    public Map<String, Integer> getKeywords(){
         return keywords;
     }
 
@@ -73,8 +73,8 @@ public class Values {
         return  ret;
     }
 
-    public void setKeywords(List<Integer> keywordsCount){
-
+    public void setKeywords(Map<String, Integer> keywords) {
+        this.keywords = keywords;
     }
 
     public void addToNumberOfTemplates(){
