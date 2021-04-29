@@ -1,14 +1,25 @@
-O POS_JOG do CLUBE assinalou no último jogo a sua NR_JOGOS_JOG . NOME_JOG estreou-se a ESTREIA_JOG , numa partida onde o CLUBE enfrentou o ADVERSARIO , com um resultado final de RESULTADO_ESTREIA.
+O POS_JOG do CLUBE assinalou no último jogo a sua presença número NR_JOGOS_JOG. 
+
+NOME_JOG estreou-se a ESTREIA_JOG , numa partida onde o CLUBE enfrentou o ADVERSARIO , com um resultado final de RESULTADO_ESTREIA.
+
 NOME_JOG é apenas superado em número de exibições por NOME_TOP (NR_JOGOS_TOP), NOME_TOP (NR_JOGOS_TOP), NOME_TOP (NR_JOGOS_TOP), NOME_TOP (NR_JOGOS_TOP) e NOME_TOP (NR_JOGOS_TOP).
+
 NOME_JOG alcançou o golo número NR_GOLOS_JOG na COMPETICAO.
+
 À sua frente com mais golos marcados em jogos por clubes e seleção, NOM_JOG tem apenas.
+
 NAC_TOP_JOG NOME_TOP_JOG (NR_GOLOS_TOP em NR_JOGOS_TOP).
+
 Os NR_GOLOS_JOG_JR apontados pelo CLUBE ao ADVERSARIO permitiram a NOME_JOG alcançar neste DIA_SEM_JOG a marca dos NR_GOLOS_JOG golos na carreira.
+
 O POS_JOG NAC_JOG atingiu este registo redondo ao cabo de NR_JOGOS_JOG jogos e com IDADE_JOG anos de idade.
+
 O POS_JOG NOME_JOG chegou a NR_JOGOS_SGOLOS_JOG jogos sem sofrer golos na COMPETICAO após a RES_JR por MARC_JR sobre o ADVERSARIO.
+
 NOME_JOG passou NR_JOGOS_SGOLOS_JOG dos NR_JOGOS_JOG jogos no COMPETICAO com as redes invioladas.
 
 O resultado frente ao ADVERSARIO coloca TREINADOR no pódio dos treinadores com melhores sequências pelo CLUBE. Série máxima de NR_JOGOS_INV jogos de invencibilidade foi alcançada com EX_TREINADOR.
+
 A receção do ADVERSARIO, nesta jornada, foi determinante para o CLUBE se manter firme na corrida aos lugares da POS_PARA_COMPETICAO e poderá colocar TRIANADOR  na restrita galeria dos treinadores com melhores séries de invencibilidade no COMPETICAO.
 
 O CLUBE RESULTADO_JORNADA em CASA/FORA por MARCADOR_JORNADA, em jogo da JORNADA da COMPETICAO.
