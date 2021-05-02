@@ -9,6 +9,7 @@ import java.util.*;
 public class TemplateManager {
 
 
+    String temaNoticia;
     private List<Integer> usedIds                             = new ArrayList<>();
     private List<Integer> usedVersions                        = new ArrayList<>();
     private Values values;
@@ -28,7 +29,7 @@ public class TemplateManager {
 
 
     public String getFirstTemplate(String tipoNoticia){
-
+        temaNoticia = tipoNoticia;
         noticia = "";
         tamanho = 0;
         templateIdPlusKeywordsMap         = new HashMap<>();
@@ -184,8 +185,29 @@ public class TemplateManager {
     * */
     //Está a receber a keyword, o size que é passado como input em keywordsSqlString e o número de vezes que a keyword se repete
     public boolean checkIfUsable(String key, int size, int valueOfKey){
-        if(valueOfKey<size)
+
+        List<String> not_to_use_1_2_3_4 = Arrays.asList("TREINADOR", "ARBITRO", "NR_JOGOS_INV", "NR_JOGOS_SGOLOS_JOG", "EX_TREINADOR");
+
+
+        List<String> t1 = Arrays.asList("Nome_JOG", "POS_JOG", "NR_GOLOS_JOG_JR", "NR_JOGOS_JOG");
+
+        List<String> t2 = Arrays.asList("Nome_JOG", "POS_JOG", "NR_GOLOS_JOG_JR", "NR_JOGOS_JOG_TOTAL", "NR_GOLOS_TOP");
+
+        List<String> t3 = Arrays.asList("Nome_JOG", "POS_JOG", "NR_GOLOS_JOG");
+
+        List<String> t4 = Arrays.asList("Nome_JOG", "POS_JOG", "ESTREIA_JOG");
+
+
+        if(not_to_use_1_2_3_4.contains(key)){
+            return false;
+        }
+
+        if(valueOfKey==0)
             return true;
+
+        if(valueOfKey<size && (temaNoticia.equals("1") && t1.contains(key) || temaNoticia.equals("2") && t2.contains(key) || temaNoticia.equals("3") && t3.contains(key) || temaNoticia.equals("4") && t4.contains(key)))
+            return true;
+
         return false;
     }
 
