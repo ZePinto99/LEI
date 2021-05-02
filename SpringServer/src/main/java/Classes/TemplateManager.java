@@ -15,6 +15,10 @@ public class TemplateManager {
     String noticia;
     int tamanho;
     int tamanhoMax;
+    Map<Integer, Integer> templateIdPlusKeywordsMap;
+    Map<Integer, String> templateIdPlusTemplateMap;
+    Map<Integer, Integer> templateIdPlusSizeMap;
+    Map<Integer, Integer> templateIdPlusVersionMap;
 
 
     public TemplateManager(){
@@ -27,10 +31,10 @@ public class TemplateManager {
 
         noticia = "";
         tamanho = 0;
-        Map<Integer, Integer> templateIdPlusKeywordsMap         = new HashMap<>();
-        Map<Integer, String> templateIdPlusTemplateMap          = new HashMap<>();
-        Map<Integer, Integer> templateIdPlusSizeMap             = new HashMap<>();
-        Map<Integer, Integer> templateIdPlusVersionMap          = new HashMap<>();
+        templateIdPlusKeywordsMap         = new HashMap<>();
+        templateIdPlusTemplateMap         = new HashMap<>();
+        templateIdPlusSizeMap             = new HashMap<>();
+        templateIdPlusVersionMap          = new HashMap<>();
 
         try {
             System.out.println("tipo: " + tipoNoticia);
@@ -61,8 +65,8 @@ public class TemplateManager {
         }
 
         //escolher 1o template
-        int templateId = selectTemplate(templateIdPlusKeywordsMap);
-        updateWithSelectedTemplate(templateId, templateIdPlusKeywordsMap,templateIdPlusTemplateMap, templateIdPlusSizeMap, templateIdPlusVersionMap);
+        int templateId = selectTemplate();
+        updateWithSelectedTemplate(templateId);
 
         //chamar metodo para escolher e gerar proximos templates
         templateLoop();
@@ -70,13 +74,12 @@ public class TemplateManager {
         return fillScript(noticia);
     }
 
-
     public void templateLoop(){
 
-        Map<Integer, Integer> templateIdPlusKeywordsMap = new HashMap<>();
-        Map<Integer, String> templateIdPlusTemplateMap  = new HashMap<>();
-        Map<Integer, Integer> templateIdPlusSizeMap     = new HashMap<>();
-        Map<Integer, Integer> templateIdPlusVersionMap  = new HashMap<>();
+        templateIdPlusKeywordsMap  = new HashMap<>();
+        templateIdPlusTemplateMap  = new HashMap<>();
+        templateIdPlusSizeMap      = new HashMap<>();
+        templateIdPlusVersionMap   = new HashMap<>();
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -119,12 +122,12 @@ public class TemplateManager {
 
         //tenta adicionar x vezes
         while (invalidTemplate && attempts<templateIdPlusSizeMap.keySet().size()){
-            int templateId = selectTemplateWithScore(templateIdPlusKeywordsMap, keywordsAlreadyUsed, templateIdPlusSizeMap);
+            int templateId = selectTemplateWithScore(keywordsAlreadyUsed);
             //Se o templateId estiver a -1 significa que não foi possível adicionar qualquer template
             if (templateId != -1) {
                 //caso o id seja diferente -1 significa que encontramos o nosso novo template
                 invalidTemplate = false;
-                updateWithSelectedTemplate(templateId, templateIdPlusKeywordsMap, templateIdPlusTemplateMap, templateIdPlusSizeMap, templateIdPlusVersionMap);
+                updateWithSelectedTemplate(templateId);
             }
         }
 
@@ -189,7 +192,7 @@ public class TemplateManager {
     /*
     * método que atribui uma probabilidade aleatória a um template de ser escolhido
     * */
-    public Integer selectTemplate(Map<Integer,Integer> templateIdPlusKeywordsMap){
+    public Integer selectTemplate(){
         //random.nextInt(max - min) + min;
         Random random = new Random();
 
@@ -209,7 +212,7 @@ public class TemplateManager {
     /*
      * método que seleciona um template com base nas keywords já usadas, classificação e nrº de utiliziações
      * */
-    public Integer selectTemplateWithScore(Map<Integer,Integer> templateIdPlusKeywordsMap, Map<String, Integer> keywordsAlreadyUsed, Map<Integer, Integer> templateIdPlusSizeMap){
+    public Integer selectTemplateWithScore(Map<String, Integer> keywordsAlreadyUsed){
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //random.nextInt(max - min) + min;
@@ -231,7 +234,7 @@ public class TemplateManager {
 
         while (iteration < limitOfTries) {
             //Selecionamos um template aleatório
-            int templateIndex = selectTemplate(templateIdPlusKeywordsMap);
+            int templateIndex = selectTemplate();
 
             /////////////////////// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ////////////////////////
             /////////////////////// É preciso ver o que templateIdPlusKeywordsMap devolve ////////////////////////
@@ -256,7 +259,7 @@ public class TemplateManager {
         return maxTmpId;
     }
 
-    public int updateWithSelectedTemplate(Integer template,Map<Integer,Integer> templateIdPlusKeywordsMap, Map<Integer,String> templateIdPlusTemplateMap,  Map<Integer,Integer> templateIdPlusSizeMap, Map<Integer,Integer> templateIdPlusVersionMap){
+    public int updateWithSelectedTemplate(int template){
 
         usedIds.add(template);
         try {

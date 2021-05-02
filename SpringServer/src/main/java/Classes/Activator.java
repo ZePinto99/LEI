@@ -1,13 +1,12 @@
 package Classes;
 import java.lang.Math;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Activator {
     private double e;
     private int constant;
 
+    //Possivelmente pode receber um map com as priority keywords de cada keyword
     public Activator(int constant) {
         this.constant = constant;
         e = 2.2204460492503130808472633361816;
