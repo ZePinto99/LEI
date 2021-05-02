@@ -24,7 +24,7 @@ public class TemplateManager {
 
     public TemplateManager(){
         values = new Values();
-        tamanhoMax = 100;
+        tamanhoMax = 1000;
     }
 
 
@@ -47,7 +47,7 @@ public class TemplateManager {
 
             Statement select = conn.createStatement();
 
-            String sql = "SELECT text, keywords, id_template, size, id_version FROM template, version WHERE template.version = id_version AND version.type = " + tipoNoticia + ";";
+            String sql = "SELECT text, keywords, id_template, size, id_version FROM template, version WHERE template.version = id_version AND template.primary = 1 AND version.type = " + tipoNoticia + ";";
 
             ResultSet rs = select.executeQuery(sql);
 
@@ -77,6 +77,8 @@ public class TemplateManager {
 
     public void templateLoop(){
 
+        System.out.println("Entrou templateLoop");
+
         templateIdPlusKeywordsMap  = new HashMap<>();
         templateIdPlusTemplateMap  = new HashMap<>();
         templateIdPlusSizeMap      = new HashMap<>();
@@ -97,7 +99,7 @@ public class TemplateManager {
 
             int size = templateIdPlusTemplateMap.size();
 
-            String sql = "SELECT text, keywords, size, id_template, id_version FROM template, keywords WHERE primary = 0 and id_template NOT IN (" + usedIdsString + ") and version NOT IN (" +usedVersionsString + ") and template.keywords = id_keywords " +keywordsSqlString(size) + ";";
+            String sql = "SELECT text, keywords, id_template, size, id_version FROM template, keywords, version WHERE template.primary = 0 and id_template NOT IN (" + usedIdsString + ") and version NOT IN (" +usedVersionsString + ") and template.keywords = id_keywords " +keywordsSqlString(size) + ";";
 
             ResultSet rs = select.executeQuery(sql);
 
@@ -106,7 +108,7 @@ public class TemplateManager {
                 templateIdPlusKeywordsMap.put(rs.getInt(3), rs.getInt(2));
                 templateIdPlusTemplateMap.put(rs.getInt(3), rs.getString(1));
                 templateIdPlusSizeMap.put(rs.getInt(3), rs.getInt(4));
-                templateIdPlusSizeMap.put(rs.getInt(3), rs.getInt(5));
+                templateIdPlusVersionMap.put(rs.getInt(3), rs.getInt(5));
             }
 
             conn.close();
@@ -121,19 +123,12 @@ public class TemplateManager {
         //vai buscar um map com as keywords e o número de vezes que foram utilizadas
         Map<String, Integer> keywordsAlreadyUsed = values.keywords;
 
-        //tenta adicionar x vezes
-        while (invalidTemplate && attempts<templateIdPlusSizeMap.keySet().size()){
-            int templateId = selectTemplateWithScore(keywordsAlreadyUsed);
-            //Se o templateId estiver a -1 significa que não foi possível adicionar qualquer template
-            if (templateId != -1) {
-                //caso o id seja diferente -1 significa que encontramos o nosso novo template
-                invalidTemplate = false;
-                updateWithSelectedTemplate(templateId);
-            }
-        }
+        int templateId = selectTemplateWithScore(keywordsAlreadyUsed);
+        updateWithSelectedTemplate(templateId);
 
         //Temos de ver se passou do limite ou se está perto de passar
         if(tamanho<tamanhoMax && !invalidTemplate){
+            System.out.println("tamanho:" + tamanho);
             templateLoop();
         }
     }
@@ -219,10 +214,10 @@ public class TemplateManager {
         Random random = new Random();
 
         int size = templateIdPlusKeywordsMap.size();
-        System.out.println("size:" + size);
+        //System.out.println("size:" + size);
 
         int randIndex;
-        if(size == 1) randIndex = 0;
+        if(size == 1 || size == 0) randIndex = 0;
         else randIndex = random.nextInt(size - 1);
 
         List<Integer> templatesList = new ArrayList<Integer>(templateIdPlusKeywordsMap.keySet());

@@ -17,7 +17,7 @@ public class Activator {
         int score = 0;
 
         //set de priority keywords da notícia (todas as priority keywords diferentes de cada keyword da notícia final)
-        Set priorityKeywordsSet =  priorityKeywordsSet(newsKeywords.keySet());
+        //Set priorityKeywordsSet =  priorityKeywordsSet(newsKeywords.keySet());
 
         //para cada keyword do template
         for(String templateKeyword :  templateKeywords){
@@ -32,7 +32,7 @@ public class Activator {
             //Vai ver se a templateKeyword é uma priority keyword
             //nota: cada priority keyword só é contabilizada 1 vez
             //aumenta o score caso se tarte de uma priority keyword
-            score += priorityScore(templateKeyword, priorityKeywordsSet);
+            //score += priorityScore(templateKeyword, priorityKeywordsSet);
             }
 
         //devolve um score/probabilidade entre 0 e 1
