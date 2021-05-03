@@ -1,5 +1,6 @@
 // Generated from C:/Users/franc/Documents/LEI\noticia.g4 by ANTLR 4.8
-package Classes;
+
+    package Classes;
     import java.io.*;
     import java.text.*;
     import java.util.*;
@@ -267,7 +268,7 @@ public class noticiaParser extends Parser {
 			{
 			setState(21);
 			((KeywordContext)_localctx).KEY = match(KEY);
-			((KeywordContext)_localctx).value = valores.getValue((((KeywordContext)_localctx).KEY!=null?((KeywordContext)_localctx).KEY.getText():null).replace("\"",""));
+			((KeywordContext)_localctx).value = valores.getValues().get((((KeywordContext)_localctx).KEY!=null?((KeywordContext)_localctx).KEY.getText():null).replace("\"",""));
 			}
 		}
 		catch (RecognitionException re) {

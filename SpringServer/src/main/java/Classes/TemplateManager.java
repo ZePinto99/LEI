@@ -324,6 +324,7 @@ public class TemplateManager {
 
     public String fillScript(String template){
         try {
+            values.fillValuesMap();
             noticiaLexer lexer = new noticiaLexer(CharStreams.fromString(template));
             System.out.println("checkpoint1");
             CommonTokenStream stream = new CommonTokenStream(lexer);
