@@ -20,6 +20,7 @@ public class Values {
         values   = new HashMap<>();
         versions = new ArrayList<>();
         numberOfTemplates=0;
+        fillValuesMap();
     }
 
     public void fillValuesMap(){
@@ -29,8 +30,8 @@ public class Values {
         values.put("NAC_JOG", "português");
         values.put("NR_GOLOS_JOG_TOTAL", "63");
         values.put("NR_JOGOS_JOG_TOTAL", "155");
-        values.put("CLUBE", "Braga");
-        values.put("COMPETICAO", "Liga NOS");
+        values.put("CLUBE", "Sporting Clube de Braga");
+        values.put("COMPETICAO", "na Liga NOS");
         values.put("TREINADOR", "Carlos Carvalhal");
         values.put("ARBITRO", "Artur Soares Dias");
         values.put("JORNADA", "25");
@@ -41,7 +42,7 @@ public class Values {
         values.put("LOCALIZACAO", "Madeira");
         values.put("MARCADOR_JORNADA", "1-0");
         values.put("ESTREIA_JOG", "5/9/2017");
-        values.put("RESULTADO_ESTREIA", "venceu");
+        values.put("RESULTADO_ESTREIA", "1-0");
         values.put("NR_GOLOS_JOG_JR", "0");
         values.put("NR_JOGOS_SGOLOS_JOG", "0");
         values.put("NOME_TOP", "Alan");
@@ -61,7 +62,7 @@ public class Values {
     }
 
     public void setVersions(List<Integer> ver){
-        versions= ver;
+        versions = ver;
     }
 
     public List<Integer> getVersions(){

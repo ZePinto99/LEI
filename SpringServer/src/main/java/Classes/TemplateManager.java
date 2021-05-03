@@ -3,6 +3,7 @@ import java.sql.*;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.springframework.core.io.FileSystemResource;
 
 import java.util.*;
 
@@ -24,7 +25,7 @@ public class TemplateManager {
 
     public TemplateManager(){
         values = new Values();
-        tamanhoMax = 1000;
+        tamanhoMax = 100;
     }
 
 
@@ -47,12 +48,11 @@ public class TemplateManager {
 
             Statement select = conn.createStatement();
 
-            String sql = "SELECT text, keywords, id_template, size, id_version FROM template, version WHERE template.version = id_version AND template.primary = 1 AND version.type = " + tipoNoticia + ";";
+            String sql = "SELECT text, keywords, id_template, size, version FROM template, version WHERE template.version = id_version AND template.primary = 1 AND version.type = " + tipoNoticia + ";";
 
             ResultSet rs = select.executeQuery(sql);
 
             while (rs.next()) {
-                System.out.println("in");
                 templateIdPlusKeywordsMap.put(rs.getInt(3), rs.getInt(2));
                 templateIdPlusTemplateMap.put(rs.getInt(3), rs.getString(1));
                 templateIdPlusSizeMap.put(rs.getInt(3), rs.getInt(4));
@@ -67,7 +67,7 @@ public class TemplateManager {
 
         //escolher 1o template
         int templateId = selectTemplate();
-        updateWithSelectedTemplate(templateId);
+        if(templateId != -1) updateWithSelectedTemplate(templateId);
 
         //chamar metodo para escolher e gerar proximos templates
         templateLoop();
@@ -91,6 +91,8 @@ public class TemplateManager {
                     getConnection("jdbc:mysql://localhost:3306/mydb?user=root&password="
                             + "root" + "&useTimezone=true&serverTimezone=UTC");
 
+            System.out.println("usedVersions antes de ir a bd : " + usedVersions);
+
             Statement select = conn.createStatement();
             String usedIdsString        = listToSqlQuery(usedIds);
             String usedVersionsString   = listToSqlQuery(usedVersions);
@@ -99,17 +101,18 @@ public class TemplateManager {
 
             int size = templateIdPlusTemplateMap.size();
 
-            String sql = "SELECT text, keywords, id_template, size, id_version FROM template, keywords, version WHERE template.primary = 0 and id_template NOT IN (" + usedIdsString + ") and version NOT IN (" +usedVersionsString + ") and template.keywords = id_keywords " +keywordsSqlString(size) + ";";
+            String sql = "SELECT text, keywords, id_template, size, version FROM template, keywords WHERE template.primary = 0 and id_template NOT IN (" + usedIdsString + ") and version NOT IN (" +usedVersionsString + ") and template.keywords = id_keywords " +keywordsSqlString(size) + ";";
 
             ResultSet rs = select.executeQuery(sql);
 
             while (rs.next()) {
-                System.out.println("in");
                 templateIdPlusKeywordsMap.put(rs.getInt(3), rs.getInt(2));
                 templateIdPlusTemplateMap.put(rs.getInt(3), rs.getString(1));
                 templateIdPlusSizeMap.put(rs.getInt(3), rs.getInt(4));
                 templateIdPlusVersionMap.put(rs.getInt(3), rs.getInt(5));
             }
+
+            System.out.println(templateIdPlusVersionMap.toString());
 
             conn.close();
 
@@ -118,7 +121,6 @@ public class TemplateManager {
         }
 
         boolean invalidTemplate = true;
-        int attempts = 0;
 
         //vai buscar um map com as keywords e o número de vezes que foram utilizadas
         Map<String, Integer> keywordsAlreadyUsed = values.keywords;
@@ -127,6 +129,7 @@ public class TemplateManager {
         updateWithSelectedTemplate(templateId);
 
         //Temos de ver se passou do limite ou se está perto de passar
+        System.out.println("usedVersions antes da nova iteração: " + usedVersions);
         if(tamanho<tamanhoMax && !invalidTemplate){
             System.out.println("tamanho:" + tamanho);
             templateLoop();
@@ -140,7 +143,7 @@ public class TemplateManager {
 
         String listIds = "";
         boolean firstTime = true;
-        for(Integer id : usedIds){
+        for(Integer id : lst){
             if(firstTime) {
                 listIds += id;
                 firstTime = false;
@@ -215,13 +218,15 @@ public class TemplateManager {
 
         int size = templateIdPlusKeywordsMap.size();
         //System.out.println("size:" + size);
+        int template;
 
         int randIndex;
-        if(size == 1 || size == 0) randIndex = 0;
-        else randIndex = random.nextInt(size - 1);
-
-        List<Integer> templatesList = new ArrayList<Integer>(templateIdPlusKeywordsMap.keySet());
-        Integer template = templatesList.get(randIndex);
+        if(size == 1 || size == 0) return -1;
+        else{
+            randIndex = random.nextInt(size - 1);
+            List<Integer> templatesList = new ArrayList<Integer>(templateIdPlusKeywordsMap.keySet());
+            template = templatesList.get(randIndex);
+        }
 
         return template;
     }
@@ -242,7 +247,7 @@ public class TemplateManager {
         double randProb = random.nextInt(1);
 
         //Criamos o Activator com o valor da constante
-        Activator activator = new Activator(100);
+        Activator activator = new Activator(500);
 
         double max = -1;
         int maxTmpId = -1;
@@ -279,6 +284,7 @@ public class TemplateManager {
     public int updateWithSelectedTemplate(int template){
 
         usedIds.add(template);
+
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
@@ -301,23 +307,26 @@ public class TemplateManager {
                     i++;
                 }
             }
+
             values.addToNumberOfTemplates();
             values.setKeywords(keywordsCount);
-            noticia +=templateIdPlusTemplateMap.get(template) + " ";
+            noticia += templateIdPlusTemplateMap.get(template) + " ";
             tamanho += templateIdPlusSizeMap.get(template);
 
-            // proximas 3 linhas, são necessárias?
-            List<Integer> versions = values.getVersions();
-            versions.add(templateIdPlusVersionMap.get(template));
-            values.setVersions(versions);
+            System.out.println(templateIdPlusVersionMap.toString());
+            System.out.println("template: " + template);
 
-            usedVersions = versions;
+            usedVersions.add(templateIdPlusVersionMap.get(template));
+
+            System.out.println("versions: " + usedVersions.toString());
+            System.out.println("ids: " + usedIds.toString());
 
             conn.close();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+
         return templateIdPlusSizeMap.get(template);
     }
 
@@ -325,6 +334,7 @@ public class TemplateManager {
     public String fillScript(String template){
         try {
             values.fillValuesMap();
+
             noticiaLexer lexer = new noticiaLexer(CharStreams.fromString(template));
             System.out.println("checkpoint1");
             CommonTokenStream stream = new CommonTokenStream(lexer);
@@ -334,7 +344,28 @@ public class TemplateManager {
             StringBuilder noticia = new StringBuilder();
             System.out.println("checkpoint4");
             noticiasParser.noticias(values, noticia);
-            System.out.println("Esta é a noticia: " + noticia.toString());
+
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+
+                Connection conn = DriverManager.
+                        getConnection("jdbc:mysql://localhost:3306/mydb?user=root&password="
+                                + "root" + "&useTimezone=true&serverTimezone=UTC");
+
+                Statement insert = conn.createStatement();
+
+
+                System.out.println(listToSqlQuery(usedVersions));
+                System.out.println(listToSqlQuery(usedIds));
+                String sql = "INSERT INTO history VALUES(DEFAULT, NOW(), '" + noticia + "','" + listToSqlQuery(usedIds) + "');";
+
+                insert.execute(sql);
+
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+
+            System.out.println("Esta é a noticia: " + noticia);
             return noticia.toString();
         }
         catch (Exception e){
