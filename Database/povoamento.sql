@@ -112,7 +112,7 @@ INSERT INTO keywords VALUES (23 ,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 INSERT INTO template VALUES (DEFAULT, 3, 23, 12, 'Este conta com "NR_GOLOS_JOG_TOTAL" golos marcados pelo clube "COMPETICAO".', 0);
 INSERT INTO template VALUES (DEFAULT, 3, 23, 13, 'Desde que chegou ao clube, já marcou "NR_GOLOS_JOG_TOTAL" golos "COMPETICAO".', 0);
 
-INSERT INTO keywords VALUES (4,0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO keywords VALUES (24,0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO template VALUES (DEFAULT, 3, 24, 18, 'Este conta com "NR_GOLOS_JOG_TOTAL" golos marcados com a camisola do "CLUBE" "COMPETICAO".', 0);
 INSERT INTO template VALUES (DEFAULT, 3, 24, 16, 'Desde que chegou ao "CLUBE", já marcou "NR_GOLOS_JOG_TOTAL" golos "COMPETICAO".', 0);
 
@@ -171,37 +171,43 @@ INSERT INTO template VALUES (DEFAULT, 5, 35, 16, 'O jogador do "CLUBE", nascido 
 -- version 6 - assunto: número jogos nesta época (type 3) 
 INSERT INTO version VALUES (6,3);
 
-INSERT INTO keywords VALUES (36 ,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO keywords VALUES (36 ,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1);
 INSERT INTO template VALUES (DEFAULT, 6, 36, 20, 'O "POS_JOG" do "CLUBE" assinalou no último jogo a sua presença número "NR_JOGOS_JOG_EPOCA" pelo clube esta época.', 1);
 INSERT INTO template VALUES (DEFAULT, 6, 36, 20, 'O "POS_JOG" do "CLUBE" atingiu na última partida a marca dos "NR_JOGOS_JOG_EPOCA" jogos pelo clube esta época.', 1);
 
-INSERT INTO keywords VALUES (37 ,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO keywords VALUES (37 ,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1);
 INSERT INTO template VALUES (DEFAULT, 6, 37, 21, '"NOME_JOG", jogador do "CLUBE", assinalou na última partida a sua presença número "NR_JOGOS_JOG_EPOCA" pelo clube esta época.', 1);
 INSERT INTO template VALUES (DEFAULT, 6, 37, 21, '"NOME_JOG", jogador do "CLUBE", atingiu na última partida a marca dos "NR_JOGOS_JOG_EPOCA" jogos pelo clube esta época.', 1);
 
-INSERT INTO keywords VALUES (38 ,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO keywords VALUES (38 ,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1);
 INSERT INTO template VALUES (DEFAULT, 6, 38, 21, 'O jogador de "IDADE_JOG" anos do "CLUBE" assinalou no último jogo a sua presença número "NR_JOGOS_JOG_EPOCA" pelo clube esta época.', 1);
 INSERT INTO template VALUES (DEFAULT, 6, 38, 21, 'O jogador de "IDADE_JOG" anos do "CLUBE" atingiu na última partida a marca dos "NR_JOGOS_JOG_EPOCA" jogos pelo clube esta época.', 1);
 
-INSERT INTO keywords VALUES (39 ,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO keywords VALUES (39 ,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1);
 INSERT INTO template VALUES (DEFAULT, 6, 39, 15, '"NOME_JOG" assinalou na última partida a sua presença número "NR_JOGOS_JOG_EPOCA" pelo clube esta época.', 1);
 INSERT INTO template VALUES (DEFAULT, 6, 39, 15, '"NOME_JOG" atingiu na última partida a marca dos "NR_JOGOS_JOG_EPOCA" jogos pelo clube esta época.', 1);
 
-INSERT INTO keywords VALUES (40 ,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO keywords VALUES (40 ,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1);
 INSERT INTO template VALUES (DEFAULT, 6, 40, 8, 'Este conta com "NR_JOGOS_JOG_EPOCA" partidas disputadas pelo clube esta época.', 0);
-INSERT INTO template VALUES (DEFAULT, 6, 40, 9, 'Desde que chegou ao clube, já disputou "NR_JOGOS_JOG_EPOCA" partidas.', 0);
+INSERT INTO template VALUES (DEFAULT, 6, 40, 9, 'Esta época, já disputou "NR_JOGOS_JOG_EPOCA" partidas pelo clube.', 0);
 
-INSERT INTO keywords VALUES (41 ,1,0,0,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO template VALUES (DEFAULT, 6, 41, 23, 'A presença no último jogo, frente ao "ADVERSARIO", permitiu que "NOME_JOG" alcançasse a marca dos "NR_JOGOS_JOG_EPOCA" jogos pelo "CLUBE".', 1);
+INSERT INTO keywords VALUES (41 ,1,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1);
+INSERT INTO template VALUES (DEFAULT, 6, 41, 25, 'A presença no último jogo, frente ao "ADVERSARIO", permitiu que "NOME_JOG" alcançasse a marca dos "NR_JOGOS_JOG_EPOCA" jogos pelo "CLUBE" esta época.', 1);
 
-INSERT INTO keywords VALUES (42 ,0,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO template VALUES (DEFAULT, 6, 42, 16, 'O "POS_JOG" atingiu este registo ao cabo de "NR_JOGOS_JOG_EPOCA" jogos e com "IDADE_JOG" anos de idade.', 0);
+INSERT INTO keywords VALUES (42 ,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1);
+INSERT INTO template VALUES (DEFAULT, 6, 42, 20, 'O "POS_JOG" atingiu este registo ao cabo de "NR_JOGOS_JOG_EPOCA" jogos realizados apenas esta época e com "IDADE_JOG" anos de idade.', 0);
 
-INSERT INTO keywords VALUES (43 ,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO template VALUES (DEFAULT, 6, 43, 16, 'Este registo foi atingido por "NOME_JOG" aos "NR_JOGOS_JOG_EPOCA" jogos e com "IDADE_JOG" anos de idade.', 0);
+INSERT INTO keywords VALUES (43 ,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1);
+INSERT INTO template VALUES (DEFAULT, 6, 43, 20, 'Este registo foi atingido por "NOME_JOG" aos "NR_JOGOS_JOG_EPOCA" jogos realizados apenas nesta época e com "IDADE_JOG" anos de idade.', 0);
 
 
--- version 7 - assunto: info sobre último jogo
+-- version 7 - assunto: info sobre último jogo (type 0)
+INSERT INTO version VALUES (7,0);
 
+INSERT INTO keywords VALUES (44 ,0,0,0,0,0,0,1,0,0,0,0,1,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO template VALUES (DEFAULT, 7, 44, 22,'A última partida disputada, frente ao "ADVERSARIO" e que o "CLUBE" "RESULTADO_JOGO" por "MARCADOR_JORNADA", permitiu-lhe atingir esta marca.', 0);
+
+INSERT INTO keywords VALUES (45 ,1,0,0,0,0,0,0,0,0,0,1,0,0,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO template VALUES (DEFAULT, 7, 45, 22,'"NOME_JOG" atingiu esta marca nesta jornada "JORNADA", numa partida disputada no "ESTADIO" contra o "ADVERSARIO" que terminou "MARCADOR_JORNADA".', 0);
 
 
