@@ -268,7 +268,7 @@ public class noticiaParser extends Parser {
 			{
 			setState(21);
 			((KeywordContext)_localctx).KEY = match(KEY);
-			((KeywordContext)_localctx).value = valores.getValues().get((((KeywordContext)_localctx).KEY!=null?((KeywordContext)_localctx).KEY.getText():null).replace("\"",""));
+			System.out.println((((KeywordContext)_localctx).KEY!=null?((KeywordContext)_localctx).KEY.getText():null));((KeywordContext)_localctx).value = valores.getValues().get((((KeywordContext)_localctx).KEY!=null?((KeywordContext)_localctx).KEY.getText():null));System.out.println(valores.getValues().get((((KeywordContext)_localctx).KEY!=null?((KeywordContext)_localctx).KEY.getText():null).replace("\"",""))
 			}
 		}
 		catch (RecognitionException re) {
