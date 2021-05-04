@@ -27,7 +27,7 @@ public class Values {
         values.put("NOME_JOG", "Ricardo Horta");
         values.put("IDADE_JOG", "26");
         values.put("POS_JOG", "extremo esquerdo");
-        values.put("NAC_JOG", "português");
+        values.put("NAC_JOG", "Portugal");
         values.put("NR_GOLOS_JOG_TOTAL", "63");
         values.put("NR_JOGOS_JOG_TOTAL", "155");
         values.put("CLUBE", "Sporting Clube de Braga");

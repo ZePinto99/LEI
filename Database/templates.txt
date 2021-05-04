@@ -23,4 +23,4 @@ O resultado frente ao ADVERSARIO coloca TREINADOR no pódio dos treinadores com 
 A receção do ADVERSARIO, nesta jornada, foi determinante para o CLUBE se manter firme na corrida aos lugares da POS_PARA_COMPETICAO e poderá colocar TRIANADOR  na restrita galeria dos treinadores com melhores séries de invencibilidade no COMPETICAO.
 
 O CLUBE RESULTADO_JORNADA em CASA/FORA por MARCADOR_JORNADA, em jogo da JORNADA da COMPETICAO.
-Com este resultado, o CLUBE continua POSICAO comPONTOS, mais DIF_CLASS do que o ADVERSARIO_TABELA, que é POSICAO_ADVERSARIO.
+Com este resultado, o CLUBE continua POSICAO com PONTOS, mais DIF_CLASS do que o ADVERSARIO_TABELA, que é POSICAO_ADVERSARIO.
