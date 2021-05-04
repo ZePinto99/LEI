@@ -45,6 +45,7 @@ INSERT INTO template VALUES (DEFAULT, 1, 7, 16, 'O "POS_JOG" atingiu este regist
 INSERT INTO keywords VALUES (8 ,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO template VALUES (DEFAULT, 1, 8, 16, 'Este registo foi atingido por "NOME_JOG" aos "NR_JOGOS_JOG_TOTAL" jogos e com "IDADE_JOG" anos de idade.', 0);
 
+
 -- version 2 - assunto: info estreia (type 0)
 INSERT INTO version VALUES (2,0);
 
@@ -53,7 +54,7 @@ INSERT INTO template VALUES (DEFAULT, 2, 9, 28,'"NOME_JOG" estreou-se a "ESTREIA
 INSERT INTO template VALUES (DEFAULT, 2, 9, 24,'"NOME_JOG" estreou-se pelo "CLUBE" a "ESTREIA_JOG", frente ao "ADVERSARIO", numa partida que terminou "RESULTADO_ESTREIA".', 0);
 
 INSERT INTO keywords VALUES (10 ,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0);
-INSERT INTO template VALUES (DEFAULT, 2, 8, 10,'"O POS_JOG" estreou-se a "ESTREIA_JOG", numa partida onde o "CLUBE" enfrentou o "ADVERSARIO", com um resultado final de "RESULTADO_ESTREIA".', 0);
+INSERT INTO template VALUES (DEFAULT, 2, 8, 10,'O "POS_JOG" estreou-se a "ESTREIA_JOG", numa partida onde o "CLUBE" enfrentou o "ADVERSARIO", com um resultado final de "RESULTADO_ESTREIA".', 0);
 INSERT INTO template VALUES (DEFAULT, 2, 8, 10,'O "POS_JOG" estreou-se pelo "CLUBE" a "ESTREIA_JOG", frente ao "ADVERSARIO", numa partida que terminou "RESULTADO_ESTREIA".', 0);
 
 INSERT INTO keywords VALUES (11 ,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0);
@@ -69,7 +70,7 @@ INSERT INTO template VALUES (DEFAULT, 2, 13, 25,'"NOME_JOG" estreou-se a "ESTREI
 INSERT INTO template VALUES (DEFAULT, 2, 13, 21,'"NOME_JOG" estreou-se pelo clube a "ESTREIA_JOG", frente ao "ADVERSARIO", numa partida que terminou "RESULTADO_ESTREIA".', 0);
 
 INSERT INTO keywords VALUES (14 ,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0);
-INSERT INTO template VALUES (DEFAULT, 2, 14, 25,'"O POS_JOG" estreou-se a "ESTREIA_JOG", numa partida onde o clube enfrentou o "ADVERSARIO", com um resultado final de "RESULTADO_ESTREIA".', 0);
+INSERT INTO template VALUES (DEFAULT, 2, 14, 25,'O "POS_JOG" estreou-se a "ESTREIA_JOG", numa partida onde o clube enfrentou o "ADVERSARIO", com um resultado final de "RESULTADO_ESTREIA".', 0);
 INSERT INTO template VALUES (DEFAULT, 2, 14, 21,'O "POS_JOG" estreou-se pelo clube a "ESTREIA_JOG", frente ao "ADVERSARIO", numa partida que terminou "RESULTADO_ESTREIA".', 0);
 
 INSERT INTO keywords VALUES (15 ,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0);
