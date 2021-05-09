@@ -5,7 +5,9 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.springframework.core.io.FileSystemResource;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Date;
 
 public class TemplateManager {
 
@@ -14,7 +16,9 @@ public class TemplateManager {
     private List<Integer> usedIds                             = new ArrayList<>();
     private List<Integer> usedVersions                        = new ArrayList<>();
     private Values values;
-    String noticia;
+    String noticiaGeral;
+    boolean competicao = true;
+
     int tamanho;
     int tamanhoMax;
     Map<Integer, Integer> templateIdPlusKeywordsMap;
@@ -25,13 +29,14 @@ public class TemplateManager {
 
     public TemplateManager(){
         values = new Values();
-        tamanhoMax = 100;
+        tamanhoMax = 1000;
     }
 
 
     public String getFirstTemplate(String tipoNoticia){
+        String noticia = "";
         temaNoticia = tipoNoticia;
-        noticia = "";
+        noticiaGeral = "";
         tamanho = 0;
         templateIdPlusKeywordsMap         = new HashMap<>();
         templateIdPlusTemplateMap         = new HashMap<>();
@@ -39,7 +44,8 @@ public class TemplateManager {
         templateIdPlusVersionMap          = new HashMap<>();
 
         try {
-            System.out.println("tipo: " + tipoNoticia);
+
+
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             Connection conn = DriverManager.
@@ -62,17 +68,35 @@ public class TemplateManager {
             conn.close();
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+            System.out.println("ERROR "  + e.getMessage());}
 
         //escolher 1o template
         int templateId = selectTemplate();
         if(templateId != -1) updateWithSelectedTemplate(templateId);
 
+        noticiaGeral = "Titulo: " + getTitulo()+ " " + values.getValue("NOME_JOG")+" \n\n" + fillScript(noticia);
         //chamar metodo para escolher e gerar proximos templates
         templateLoop();
 
-        return fillScript(noticia);
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        noticiaGeral += ("\n\nNotícia da autoria do gerador automático de notícias do Sporting Clube de Braga em "  + formatter.format(date));
+
+        return noticiaGeral;
+    }
+
+    public String getTitulo(){
+        switch (temaNoticia){
+            case "1":
+                return "Golos marcados nesta época";
+            case "2":
+                return "Golos marcados (total)";
+            case "3":
+                return "Número jogos (esta época)";
+            case "4":
+                return "Número jogos (total)";
+        }
+        return "";
     }
 
     public void templateLoop(){
@@ -91,7 +115,8 @@ public class TemplateManager {
                     getConnection("jdbc:mysql://localhost:3306/mydb?user=root&password="
                             + "root" + "&useTimezone=true&serverTimezone=UTC");
 
-            System.out.println("usedVersions antes de ir a bd : " + usedVersions);
+
+
 
             Statement select = conn.createStatement();
             String usedIdsString        = listToSqlQuery(usedIds);
@@ -104,7 +129,7 @@ public class TemplateManager {
             String sql = "SELECT text, keywords, id_template, size, version FROM template, keywords WHERE template.primary = 0 and id_template NOT IN (" + usedIdsString + ") and version NOT IN (" +usedVersionsString + ") and template.keywords = id_keywords " +keywordsSqlString(size) + ";";
 
             ResultSet rs = select.executeQuery(sql);
-
+            if(rs == null) return;
             while (rs.next()) {
                 templateIdPlusKeywordsMap.put(rs.getInt(3), rs.getInt(2));
                 templateIdPlusTemplateMap.put(rs.getInt(3), rs.getString(1));
@@ -112,26 +137,25 @@ public class TemplateManager {
                 templateIdPlusVersionMap.put(rs.getInt(3), rs.getInt(5));
             }
 
-            System.out.println(templateIdPlusVersionMap.toString());
+
 
             conn.close();
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-
-        boolean invalidTemplate = true;
+            System.out.println("ERROR "  + e.getMessage());}
 
         //vai buscar um map com as keywords e o número de vezes que foram utilizadas
         Map<String, Integer> keywordsAlreadyUsed = values.keywords;
 
         int templateId = selectTemplateWithScore(keywordsAlreadyUsed);
+        if(templateId == -1) return;
         updateWithSelectedTemplate(templateId);
 
         //Temos de ver se passou do limite ou se está perto de passar
-        System.out.println("usedVersions antes da nova iteração: " + usedVersions);
-        if(tamanho<tamanhoMax && !invalidTemplate){
-            System.out.println("tamanho:" + tamanho);
+        System.out.println("Tamanho atual: " + tamanho);
+        //System.out.println("usedVersions antes da nova iteração: " + usedVersions);
+        if(tamanho<tamanhoMax  ){
+
             templateLoop();
         }
     }
@@ -203,7 +227,7 @@ public class TemplateManager {
         if(valueOfKey==0)
             return true;
 
-        if(valueOfKey<size && (temaNoticia.equals("1") && t1.contains(key) || temaNoticia.equals("2") && t2.contains(key) || temaNoticia.equals("3") && t3.contains(key) || temaNoticia.equals("4") && t4.contains(key)))
+        if((size)/(valueOfKey+1) >1 && (temaNoticia.equals("1") && t1.contains(key) || temaNoticia.equals("2") && t2.contains(key) || temaNoticia.equals("3") && t3.contains(key) || temaNoticia.equals("4") && t4.contains(key)))
             return true;
 
         return false;
@@ -257,7 +281,8 @@ public class TemplateManager {
         while (iteration < limitOfTries) {
             //Selecionamos um template aleatório
             int templateIndex = selectTemplate();
-
+            if(templateIndex == -1) return  templateIndex;
+            iteration++;
             /////////////////////// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ////////////////////////
             /////////////////////// É preciso ver o que templateIdPlusKeywordsMap devolve ////////////////////////
             /////////////////////// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ////////////////////////
@@ -267,6 +292,7 @@ public class TemplateManager {
             //recebe a lista de keywords do template e keywords já usadas na notícia
             double templateProb = activator.tempScore(templateKeywords ,keywordsAlreadyUsed);
             //Se o score do template bater o randProb e o tamanho do template for válido o template é logo selecionado
+
             if (templateProb> randProb && (templateIdPlusSizeMap.get(templateIndex)+tamanho) < tamanhoMax)
                 return templateIndex;
 
@@ -283,51 +309,60 @@ public class TemplateManager {
 
     public int updateWithSelectedTemplate(int template){
 
-        usedIds.add(template);
+            String noticia = "";
+            System.out.println("In updateWithSelectedTemplate");
+            usedIds.add(template);
 
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver");
 
-            Connection conn = DriverManager.
-                    getConnection("jdbc:mysql://localhost:3306/mydb?user=root&password="
-                            + "root" + "&useTimezone=true&serverTimezone=UTC");
+                Connection conn = DriverManager.
+                        getConnection("jdbc:mysql://localhost:3306/mydb?user=root&password="
+                                + "root" + "&useTimezone=true&serverTimezone=UTC");
 
-            Statement select = conn.createStatement();
+                Statement select = conn.createStatement();
 
-            String sql = "SELECT * FROM keywords WHERE id_keywords = " + templateIdPlusKeywordsMap.get(template) + ";";
+                String sql = "SELECT * FROM keywords WHERE id_keywords = " + templateIdPlusKeywordsMap.get(template) + ";";
 
-            ResultSet rs = select.executeQuery(sql);
+                ResultSet rs = select.executeQuery(sql);
+                if(rs == null) return -1;
+                Map<String, Integer> keywordsCount = values.getKeywords();
 
-            Map<String, Integer> keywordsCount = values.getKeywords();
-
-            while (rs.next()) {
-                int i = 0;
-                for (String key : keywordsCount.keySet()){
-                    keywordsCount.put(key, rs.getInt(i+1)+keywordsCount.get(key));
-                    i++;
+                while (rs.next()) {
+                    int i = 0;
+                    for (String key : values.keywordsList ){
+                        System.out.println("->->->->" + key);
+                        keywordsCount.put(key, rs.getInt(i+1)+keywordsCount.get(key));
+                        i++;
+                    }
                 }
+                System.out.println(keywordsCount.get("COMPETICAO"));
+                values.addToNumberOfTemplates();
+                values.setKeywords(keywordsCount);
+                noticia += templateIdPlusTemplateMap.get(template) + " ";
+                tamanho += templateIdPlusSizeMap.get(template);
+
+
+
+                usedVersions.add(templateIdPlusVersionMap.get(template));
+
+
+
+                conn.close();
+
+            } catch (Exception e) {
+                System.out.println("ERROR "  + e.getMessage());}
+            System.out.println("noticia.> " + noticia);
+            noticiaGeral += fillScript(noticia);
+            System.out.println("--------------------> " + values.getKeywords().get("COMPETICAO"));
+            if(values.getKeywords().get("COMPETICAO")>0 && competicao){/*
+                System.out.println(">--------------------> " + values.getKeywords().get("COMPETICAO"));
+                competicao = false;
+                if(values.getValue("COMPETICAO").equals("na Liga NOS"))
+                    values.putValueInMap("COMPETICAO","em todas as competicoes");*/
+
             }
-
-            values.addToNumberOfTemplates();
-            values.setKeywords(keywordsCount);
-            noticia += templateIdPlusTemplateMap.get(template) + " ";
-            tamanho += templateIdPlusSizeMap.get(template);
-
-            System.out.println(templateIdPlusVersionMap.toString());
-            System.out.println("template: " + template);
-
-            usedVersions.add(templateIdPlusVersionMap.get(template));
-
-            System.out.println("versions: " + usedVersions.toString());
-            System.out.println("ids: " + usedIds.toString());
-
-            conn.close();
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-
-        return templateIdPlusSizeMap.get(template);
+            return templateIdPlusSizeMap.get(template);
     }
 
 
@@ -362,13 +397,17 @@ public class TemplateManager {
                 insert.execute(sql);
 
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                System.out.println("ERROR "  + e.getMessage());
             }
 
-            System.out.println("Esta é a noticia: " + noticia);
+
+
+
+            //System.out.println("título: " + titulo + "noticia: " + noticia);
             return noticia.toString();
         }
         catch (Exception e){
+
             return e.toString();
         }
 

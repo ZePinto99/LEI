@@ -22,7 +22,7 @@ public class RequestController {
 
 
 		//Method to get info
-
+		System.out.println(noticia);
 		//JsonConverter
 		return noticia;
 	}
