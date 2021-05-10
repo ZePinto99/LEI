@@ -1,7 +1,6 @@
 // Generated from C:/Users/franc/Documents/LEI\noticia.g4 by ANTLR 4.8
 
-    package Classes;
-    import java.io.*;
+import java.io.*;
     import java.text.*;
     import java.util.*;
     import java.util.stream.*;

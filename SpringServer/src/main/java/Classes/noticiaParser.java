@@ -1,7 +1,6 @@
 // Generated from C:/Users/franc/Documents/LEI\noticia.g4 by ANTLR 4.8
 
-    package Classes;
-    import java.io.*;
+import java.io.*;
     import java.text.*;
     import java.util.*;
     import java.util.stream.*;
@@ -101,6 +100,7 @@ public class noticiaParser extends Parser {
 		public StringBuilder noticiaIn;
 		public KeywordContext keyword;
 		public TextoContext texto;
+		public TerminalNode EOF() { return getToken(noticiaParser.EOF, 0); }
 		public List<KeywordContext> keyword() {
 			return getRuleContexts(KeywordContext.class);
 		}
@@ -172,6 +172,8 @@ public class noticiaParser extends Parser {
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==WORDS || _la==KEY );
+			setState(18);
+			match(EOF);
 			}
 		}
 		catch (RecognitionException re) {
@@ -217,7 +219,7 @@ public class noticiaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(18);
+			setState(20);
 			((TextoContext)_localctx).string = string();
 			((TextoContext)_localctx).value = (((TextoContext)_localctx).string!=null?_input.getText(((TextoContext)_localctx).string.start,((TextoContext)_localctx).string.stop):null);
 			}
@@ -266,7 +268,7 @@ public class noticiaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(21);
+			setState(23);
 			((KeywordContext)_localctx).KEY = match(KEY);
 			System.out.println((((KeywordContext)_localctx).KEY!=null?((KeywordContext)_localctx).KEY.getText():null));((KeywordContext)_localctx).value = valores.getValues().get((((KeywordContext)_localctx).KEY!=null?((KeywordContext)_localctx).KEY.getText():null).replace("\"",""));System.out.println(valores.getValues().get((((KeywordContext)_localctx).KEY!=null?((KeywordContext)_localctx).KEY.getText():null).replace("\"","")));
 			}
@@ -309,7 +311,7 @@ public class noticiaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(24);
+			setState(26);
 			match(WORDS);
 			}
 		}
@@ -325,14 +327,15 @@ public class noticiaParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\7\35\4\2\t\2\4\3"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\7\37\4\2\t\2\4\3"+
 		"\t\3\4\4\t\4\4\5\t\5\3\2\3\2\3\2\3\2\3\2\3\2\6\2\21\n\2\r\2\16\2\22\3"+
-		"\3\3\3\3\3\3\4\3\4\3\4\3\5\3\5\3\5\2\2\6\2\4\6\b\2\2\2\32\2\20\3\2\2\2"+
-		"\4\24\3\2\2\2\6\27\3\2\2\2\b\32\3\2\2\2\n\13\5\6\4\2\13\f\b\2\1\2\f\21"+
-		"\3\2\2\2\r\16\5\4\3\2\16\17\b\2\1\2\17\21\3\2\2\2\20\n\3\2\2\2\20\r\3"+
-		"\2\2\2\21\22\3\2\2\2\22\20\3\2\2\2\22\23\3\2\2\2\23\3\3\2\2\2\24\25\5"+
-		"\b\5\2\25\26\b\3\1\2\26\5\3\2\2\2\27\30\7\4\2\2\30\31\b\4\1\2\31\7\3\2"+
-		"\2\2\32\33\7\3\2\2\33\t\3\2\2\2\4\20\22";
+		"\2\3\2\3\3\3\3\3\3\3\4\3\4\3\4\3\5\3\5\3\5\2\2\6\2\4\6\b\2\2\2\34\2\20"+
+		"\3\2\2\2\4\26\3\2\2\2\6\31\3\2\2\2\b\34\3\2\2\2\n\13\5\6\4\2\13\f\b\2"+
+		"\1\2\f\21\3\2\2\2\r\16\5\4\3\2\16\17\b\2\1\2\17\21\3\2\2\2\20\n\3\2\2"+
+		"\2\20\r\3\2\2\2\21\22\3\2\2\2\22\20\3\2\2\2\22\23\3\2\2\2\23\24\3\2\2"+
+		"\2\24\25\7\2\2\3\25\3\3\2\2\2\26\27\5\b\5\2\27\30\b\3\1\2\30\5\3\2\2\2"+
+		"\31\32\7\4\2\2\32\33\b\4\1\2\33\7\3\2\2\2\34\35\7\3\2\2\35\t\3\2\2\2\4"+
+		"\20\22";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
