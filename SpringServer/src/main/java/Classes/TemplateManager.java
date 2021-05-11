@@ -31,6 +31,7 @@ public class TemplateManager {
 
     public TemplateManager() {
         values = new Values();
+        values.fillValuesMap();
         tamanhoMax = 1000;
     }
 
@@ -74,16 +75,35 @@ public class TemplateManager {
         }
 
         //escolher 1o template
+        noticiaGeral = "Titulo: " + getTitulo() + " " + values.getValue("NOME_JOG") + " \n\n" ;
         int templateId = selectTemplate();
         if (templateId != -1) updateWithSelectedTemplate(templateId);
 
-        noticiaGeral = "Titulo: " + getTitulo() + " " + values.getValue("NOME_JOG") + " \n\n" + fillScript(noticia);
         //chamar metodo para escolher e gerar proximos templates
         templateLoop();
 
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         noticiaGeral += ("\n\nNotícia da autoria do gerador automático de notícias do Sporting Clube de Braga em " + formatter.format(date));
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            Connection conn = DriverManager.
+                    getConnection("jdbc:mysql://localhost:3306/mydb?user=root&password="
+                            + "root" + "&useTimezone=true&serverTimezone=UTC");
+
+            Statement insert = conn.createStatement();
+
+
+            String sql = "INSERT INTO history VALUES(DEFAULT, NOW(), '" + noticiaGeral + "','" + listToSqlQuery(usedIds) + "');";
+
+            insert.execute(sql);
+
+        } catch (Exception e) {
+            System.out.println("ERROR " + e.getMessage());
+        }
+
 
         return noticiaGeral;
     }
@@ -328,7 +348,7 @@ public class TemplateManager {
             Map<String, Integer> keywordsCount = values.getKeywords();
 
             while (rs.next()) {
-                int i = 0;
+                int i = 1;
                 for (String key : values.keywordsList) {
                     System.out.println("->->->->" + key);
                     keywordsCount.put(key, rs.getInt(i + 1) + keywordsCount.get(key));
@@ -350,17 +370,15 @@ public class TemplateManager {
         } catch (Exception e) {
             System.out.println("ERROR " + e.getMessage());
         }
-        System.out.println("noticia.> " + noticia);
         System.out.println("noticia geral: " + noticiaGeral);
         noticiaGeral += fillScript(noticia);
         System.out.println("noticia geral 2: " + noticiaGeral);
 
-        System.out.println("--------------------> " + values.getKeywords().get("COMPETICAO"));
-        if (values.getKeywords().get("COMPETICAO") > 0 && competicao) {/*
-                System.out.println(">--------------------> " + values.getKeywords().get("COMPETICAO"));
-                competicao = false;
-                if(values.getValue("COMPETICAO").equals("na Liga NOS"))
-                    values.putValueInMap("COMPETICAO","em todas as competicoes");*/
+
+        if (values.getKeywords().get("COMPETICAO") > 0 && competicao) {
+            competicao = false;
+            if(values.getValue("COMPETICAO").equals("na Liga NOS"))
+                values.putValueInMap("COMPETICAO","em todas as competicoes");
 
         }
         System.out.println("chachada");
@@ -370,7 +388,7 @@ public class TemplateManager {
 
     public String fillScript(String template) {
         try {
-            values.fillValuesMap();
+
 
             noticiaLexer lexer = new noticiaLexer(CharStreams.fromString(template));
             System.out.println("checkpoint1");
@@ -381,26 +399,6 @@ public class TemplateManager {
             StringBuilder noticia = new StringBuilder();
             System.out.println("checkpoint4");
             noticiasParser.noticias(values, noticia);
-
-            try {
-                Class.forName("com.mysql.cj.jdbc.Driver");
-
-                Connection conn = DriverManager.
-                        getConnection("jdbc:mysql://localhost:3306/mydb?user=root&password="
-                                + "root" + "&useTimezone=true&serverTimezone=UTC");
-
-                Statement insert = conn.createStatement();
-
-
-                System.out.println(listToSqlQuery(usedVersions));
-                System.out.println(listToSqlQuery(usedIds));
-                String sql = "INSERT INTO history VALUES(DEFAULT, NOW(), '" + noticia + "','" + listToSqlQuery(usedIds) + "');";
-
-                insert.execute(sql);
-
-            } catch (Exception e) {
-                System.out.println("ERROR " + e.getMessage());
-            }
 
 
             //System.out.println("título: " + titulo + "noticia: " + noticia);
