@@ -24,17 +24,15 @@ public class GetNoticias {
     }
 
 
+    public String getNoticiaString() {
 
-
-    public String getNoticiaString(){
-
-        String noticia ="";
+        String noticia = "";
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             Connection conn = DriverManager.
-                    getConnection("jdbc:mysql://localhost:3306/mydb?user=root&password="
-                            + "root" + "&useTimezone=true&serverTimezone=UTC");
+                    getConnection("jdbc:mysql://projetoleibd.cpjxfbj4rl9p.eu-west-3.rds.amazonaws.com:3306/mydb?user=Grupo58&password="
+                            + "password" + "&useTimezone=true&serverTimezone=UTC");
 
 
             Statement select = conn.createStatement();
@@ -55,4 +53,40 @@ public class GetNoticias {
         }
         return noticia;
     }
+
+    public String getNoticias(){
+
+        String noticia = "";
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            Connection conn = DriverManager.
+                    getConnection("jdbc:mysql://projetoleibd.cpjxfbj4rl9p.eu-west-3.rds.amazonaws.com:3306/mydb?user=Grupo58&password="
+                            + "password" + "&useTimezone=true&serverTimezone=UTC");
+
+
+            Statement select = conn.createStatement();
+
+            String sql = "SELECT text FROM history order by id_history desc limit 5;";
+
+            int tt=0;
+            ResultSet rs = select.executeQuery(sql);
+            if (rs == null) return "";
+            while (rs.next() && tt<5) {
+                tt++;
+                noticia+= rs.getString(1) + "\n\n\n";
+            }
+
+
+            conn.close();
+
+        } catch (Exception e) {
+            System.out.println("ERROR " + e.getMessage());
+        }
+        return noticia;
+
+    }
+
 }
+
+

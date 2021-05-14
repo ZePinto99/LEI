@@ -27,26 +27,18 @@ public class RequestController {
 		return noticia;
 	}
 
-	/*@PostMapping("/getNoticias")
-	public String getNoticias() {
-
-		/*System.out.println("--------" + tg.getName());
-		TemplateManager templateManager = new TemplateManager();
-
-		String noticia = templateManager.getFirstTemplate(tg.getName());
-
-
-		//Method to get info
-		System.out.println(noticia);*/
-		//JsonConverter
-		//return noticia;
-	//}
-
 	@PostMapping("/getNoticia")
 	public String getNoticia(@RequestBody GetNoticias tg) {
 
 		System.out.println("----------------");
 		return tg.getNoticiaString();
+	}
+
+	@PostMapping("/getNoticias")
+	public String getNoticias() {
+		GetNoticias tg = new GetNoticias("-1", "-1");
+		System.out.println("----------------");
+		return tg.getNoticias();
 	}
 
 }

@@ -4,7 +4,6 @@ import java.sql.*;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.springframework.core.io.FileSystemResource;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -52,11 +51,11 @@ public class TemplateManager {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             Connection conn = DriverManager.
-                    getConnection("jdbc:mysql://localhost:3306/mydb?user=root&password="
-                            + "root" + "&useTimezone=true&serverTimezone=UTC");
+                    getConnection("jdbc:mysql://projetoleibd.cpjxfbj4rl9p.eu-west-3.rds.amazonaws.com:3306/mydb?user=Grupo58&password="
+                            + "password" + "&useTimezone=true&serverTimezone=UTC");
 
             Statement select = conn.createStatement();
-
+            System.out.println("fst");
             String sql = "SELECT text, keywords, id_template, size, version FROM template, version WHERE template.version = id_version AND template.primary = 1 AND version.type = " + tipoNoticia + ";";
 
             ResultSet rs = select.executeQuery(sql);
@@ -90,8 +89,8 @@ public class TemplateManager {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             Connection conn = DriverManager.
-                    getConnection("jdbc:mysql://localhost:3306/mydb?user=root&password="
-                            + "root" + "&useTimezone=true&serverTimezone=UTC");
+                    getConnection("jdbc:mysql://projetoleibd.cpjxfbj4rl9p.eu-west-3.rds.amazonaws.com:3306/mydb?user=Grupo58&password="
+                            + "password" + "&useTimezone=true&serverTimezone=UTC");
 
             Statement insert = conn.createStatement();
 
@@ -135,8 +134,8 @@ public class TemplateManager {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             Connection conn = DriverManager.
-                    getConnection("jdbc:mysql://localhost:3306/mydb?user=root&password="
-                            + "root" + "&useTimezone=true&serverTimezone=UTC");
+                    getConnection("jdbc:mysql://projetoleibd.cpjxfbj4rl9p.eu-west-3.rds.amazonaws.com:3306/mydb?user=Grupo58&password="
+                            + "password" + "&useTimezone=true&serverTimezone=UTC");
 
 
             Statement select = conn.createStatement();
@@ -336,8 +335,8 @@ public class TemplateManager {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             Connection conn = DriverManager.
-                    getConnection("jdbc:mysql://localhost:3306/mydb?user=root&password="
-                            + "root" + "&useTimezone=true&serverTimezone=UTC");
+                    getConnection("jdbc:mysql://projetoleibd.cpjxfbj4rl9p.eu-west-3.rds.amazonaws.com:3306/mydb?user=Grupo58&password="
+                            + "password" + "&useTimezone=true&serverTimezone=UTC");
 
             Statement select = conn.createStatement();
 
