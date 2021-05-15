@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GetNoticias {
 
@@ -54,9 +56,9 @@ public class GetNoticias {
         return noticia;
     }
 
-    public String getNoticias(){
+    public List<String> getNoticias(){
 
-        String noticia = "";
+        List<String> noticias = new ArrayList<>();
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
@@ -69,12 +71,13 @@ public class GetNoticias {
 
             String sql = "SELECT text FROM history order by id_history desc limit 5;";
 
+
             int tt=0;
             ResultSet rs = select.executeQuery(sql);
-            if (rs == null) return "";
+            if (rs == null) return noticias;
             while (rs.next() && tt<5) {
                 tt++;
-                noticia+= rs.getString(1) + "\n\n\n";
+                noticias.add(rs.getString(1) );
             }
 
 
@@ -83,7 +86,7 @@ public class GetNoticias {
         } catch (Exception e) {
             System.out.println("ERROR " + e.getMessage());
         }
-        return noticia;
+        return noticias;
 
     }
 
