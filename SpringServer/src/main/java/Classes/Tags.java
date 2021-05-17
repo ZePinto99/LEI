@@ -16,20 +16,20 @@ public class Tags {
     }
 
 
-    public String getName() {
+    public String getTipoAlerta() {
         return this.tipoAlerta;
     }
 
-    public String getRole() {
+    public String getValorAlerta() {
         return this.valorAlerta;
     }
 
-    public void setName(String name) {
-        this.tipoAlerta = name;
+    public String getTipoComp() {
+        return this.tipoComp;
     }
 
-    public void setRole(String role) {
-        this.valorAlerta = role;
+    public String getIdJogador() {
+        return this.idJogador;
     }
 
 }

@@ -7,13 +7,15 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Values {
+    String id;
     Map<String, Integer> keywords;  //Passou de List<String> para Map<keyword, nrº de repetições>
     Map<String, String> values;
     Integer numberOfTemplates;
     List<Integer> versions;
     List<String> keywordsList;
 
-    public Values(){
+    public Values(String id){
+        this.id = id;
         //Tags tags
         //Só para teste temos de ir buscar à bd  NOTA: O MAP DEVE ESTAR NA MESMA ORDEM QUE A BD!!!!
         keywordsList = Arrays.asList("NOME_JOG", "IDADE_JOG", "POS_JOG", "NAC_JOG", "NR_GOLOS_JOG_TOTAL", "NR_JOGOS_JOG_TOTAL", "CLUBE", "COMPETICAO", "TREINADOR", "ARBITRO", "JORNADA", "RESULTADO_JOGO", "CASA/FORA", "ADVERSARIO", "ESTADIO", "LOCALIZACAO", "MARCADOR_JORNADA", "ESTREIA_JOG", "RESULTADO_ESTREIA", "NR_GOLOS_JOG_JR", "NR_JOGOS_SGOLOS_JOG", "NOME_TOP", "NR_JOGOS_TOP", "NR_GOLOS_TOP", "NR_GOLOS_JOG_EPOCA", "NR_JOGOS_JOG_EPOCA", "NR_GOLOS_JOG_EPOCA_ANT", "NR_JOGOS_JOG_EPOCA_ANT");
