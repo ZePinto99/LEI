@@ -16,10 +16,9 @@ public class RequestController {
 	@PostMapping("/getInfo")
 	public String getInfo(@RequestBody Tags tg) {
 
-		System.out.println("--------" + tg.getName());
-		TemplateManager templateManager = new TemplateManager();
+		TemplateManager templateManager = new TemplateManager(tg.getIdJogador());
 
-		String noticia = templateManager.getFirstTemplate(tg.getName());
+		String noticia = templateManager.getFirstTemplate(tg);
 
 
 		//Method to get info

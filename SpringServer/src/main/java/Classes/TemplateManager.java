@@ -8,11 +8,18 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Date;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class TemplateManager {
 
 
     String temaNoticia;
+    String idjog;
+    String valoralerta;
+    String tipoComp;
+
+
     private List<Integer> usedIds = new ArrayList<>();
     private List<Integer> usedVersions = new ArrayList<>();
     private Values values;
@@ -28,16 +35,19 @@ public class TemplateManager {
     Map<Integer, Integer> templateIdPlusVersionMap;
 
 
-    public TemplateManager() {
-        values = new Values();
+    public TemplateManager(String id) {
+        values = new Values(id);
         values.fillValuesMap();
         tamanhoMax = 1000;
     }
 
 
-    public String getFirstTemplate(String tipoNoticia) {
+    public String getFirstTemplate(Tags tg) {
         noticia = "";
-        temaNoticia = tipoNoticia;
+        temaNoticia = tg.getTipoAlerta();
+        idjog = tg.getIdJogador();
+        tipoComp = tg.getTipoComp();
+        valoralerta = tg.getValorAlerta();
         noticiaGeral = "";
         tamanho = 0;
         templateIdPlusKeywordsMap = new HashMap<>();
@@ -56,7 +66,7 @@ public class TemplateManager {
 
             Statement select = conn.createStatement();
             System.out.println("fst");
-            String sql = "SELECT text, keywords, id_template, size, version FROM template, version WHERE template.version = id_version AND template.primary = 1 AND version.type = " + tipoNoticia + ";";
+            String sql = "SELECT text, keywords, id_template, size, version FROM template, version WHERE template.version = id_version AND template.primary = 1 AND version.type = " + temaNoticia + ";";
 
             ResultSet rs = select.executeQuery(sql);
 
@@ -72,9 +82,10 @@ public class TemplateManager {
         } catch (Exception e) {
             System.out.println("ERROR " + e.getMessage());
         }
+        ExternalDBAccess eDBA = new ExternalDBAccess();
 
         //escolher 1o template
-        noticiaGeral = "Titulo: " + getTitulo() + " " + values.getValue("NOME_JOG") + " \n\n" ;
+        noticiaGeral = "Titulo: " + getTitulo() + " " + eDBA.getName(idjog) + " \n\n" ;
         int templateId = selectTemplate();
         if (templateId != -1) updateWithSelectedTemplate(templateId);
 
@@ -328,9 +339,12 @@ public class TemplateManager {
 
     public int updateWithSelectedTemplate(int template) {
 
+
+
         System.out.println("In updateWithSelectedTemplate");
         usedIds.add(template);
 
+        Map<String, Integer> keywordsTemplate = new HashMap<>();
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
@@ -346,11 +360,13 @@ public class TemplateManager {
             if (rs == null) return -1;
             Map<String, Integer> keywordsCount = values.getKeywords();
 
+            keywordsTemplate = values.keywordsList.stream().collect(Collectors.toMap(Function.identity(), i -> 0));
+
             while (rs.next()) {
                 int i = 1;
                 for (String key : values.keywordsList) {
-                    System.out.println("->->->->" + key);
                     keywordsCount.put(key, rs.getInt(i + 1) + keywordsCount.get(key));
+                    keywordsTemplate.put(key, rs.getInt(i + 1));
                     i++;
                 }
             }
@@ -370,7 +386,7 @@ public class TemplateManager {
             System.out.println("ERROR " + e.getMessage());
         }
         System.out.println("noticia geral: " + noticiaGeral);
-        noticiaGeral += fillScript(noticia);
+        noticiaGeral += fillScript(noticia,keywordsTemplate);
         System.out.println("noticia geral 2: " + noticiaGeral);
 
 
@@ -385,9 +401,14 @@ public class TemplateManager {
     }
 
 
-    public String fillScript(String template) {
+    public String fillScript(String template, Map<String, Integer> keywordsTemplate) {
         try {
 
+            //codigo para ir buscar a bd das babes
+
+            ExternalDBAccess eDBA = new ExternalDBAccess();
+
+            Values templateValues =  eDBA.getValues(keywordsTemplate, idjog);
 
             noticiaLexer lexer = new noticiaLexer(CharStreams.fromString(template));
             System.out.println("checkpoint1");
@@ -397,7 +418,7 @@ public class TemplateManager {
             System.out.println("checkpoint3");
             StringBuilder noticia = new StringBuilder();
             System.out.println("checkpoint4");
-            noticiasParser.noticias(values, noticia);
+            noticiasParser.noticias(templateValues, noticia);
 
 
             //System.out.println("título: " + titulo + "noticia: " + noticia);
