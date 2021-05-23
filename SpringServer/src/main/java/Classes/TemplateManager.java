@@ -29,6 +29,7 @@ public class TemplateManager {
 
     int tamanho;
     int tamanhoMax;
+    int size;
     Map<Integer, Integer> templateIdPlusKeywordsMap;
     Map<Integer, String> templateIdPlusTemplateMap;
     Map<Integer, Integer> templateIdPlusSizeMap;
@@ -38,7 +39,7 @@ public class TemplateManager {
     public TemplateManager(String id) {
         values = new Values(id);
         values.fillValuesMap();
-        tamanhoMax = 1000;
+        tamanhoMax = 110;
     }
 
 
@@ -54,7 +55,7 @@ public class TemplateManager {
         templateIdPlusTemplateMap = new HashMap<>();
         templateIdPlusSizeMap = new HashMap<>();
         templateIdPlusVersionMap = new HashMap<>();
-
+        size = 1;
         try {
 
 
@@ -65,7 +66,6 @@ public class TemplateManager {
                             + "password" + "&useTimezone=true&serverTimezone=UTC");
 
             Statement select = conn.createStatement();
-            System.out.println("fst");
             String sql = "SELECT text, keywords, id_template, size, version FROM template, version WHERE template.version = id_version AND template.primary = 1 AND version.type = " + temaNoticia + ";";
 
             ResultSet rs = select.executeQuery(sql);
@@ -155,7 +155,7 @@ public class TemplateManager {
 
             //adicionar filtros na query para ver keyWords relevantes
 
-            int size = templateIdPlusTemplateMap.size();
+
 
             String sql = "SELECT text, keywords, id_template, size, version FROM template, keywords WHERE template.primary = 0 and id_template NOT IN (" + usedIdsString + ") and version NOT IN (" + usedVersionsString + ") and template.keywords = id_keywords " + keywordsSqlString(size) + ";";
 
@@ -184,9 +184,9 @@ public class TemplateManager {
 
         //Temos de ver se passou do limite ou se está perto de passar
         System.out.println("Tamanho atual: " + tamanho);
-        //System.out.println("usedVersions antes da nova iteração: " + usedVersions);
         if (tamanho < tamanhoMax) {
 
+            size++;
             templateLoop();
         }
     }
@@ -257,7 +257,9 @@ public class TemplateManager {
         if (valueOfKey == 0)
             return true;
 
-        if ((size) / (valueOfKey + 1) > 1 && (temaNoticia.equals("1") && t1.contains(key) || temaNoticia.equals("2") && t2.contains(key) || temaNoticia.equals("3") && t3.contains(key) || temaNoticia.equals("4") && t4.contains(key)))
+        double sizeD = size;
+        double valueD = valueOfKey + 1;
+        if ((sizeD) / valueD >= 1 )//&& (temaNoticia.equals("1") && t1.contains(key) || temaNoticia.equals("2") && t2.contains(key) || temaNoticia.equals("3") && t3.contains(key) || temaNoticia.equals("4") && t4.contains(key)))
             return true;
 
         return false;
@@ -271,7 +273,6 @@ public class TemplateManager {
         Random random = new Random();
 
         int size = templateIdPlusKeywordsMap.size();
-        //System.out.println("size:" + size);
         int template;
 
         int randIndex;
@@ -308,7 +309,7 @@ public class TemplateManager {
         int limitOfTries = templateIdPlusKeywordsMap.keySet().size(); //É preciso ver que número podemos meter aqui
         int iteration = 0;
 
-        while (iteration < limitOfTries) {
+        while (iteration < limitOfTries + 5) {
             //Selecionamos um template aleatório
             int templateIndex = selectTemplate();
             if (templateIndex == -1) return templateIndex;
@@ -370,7 +371,6 @@ public class TemplateManager {
                     i++;
                 }
             }
-            System.out.println(keywordsCount.get("COMPETICAO"));
             values.addToNumberOfTemplates();
             values.setKeywords(keywordsCount);
             noticia = templateIdPlusTemplateMap.get(template) + " ";
@@ -385,9 +385,7 @@ public class TemplateManager {
         } catch (Exception e) {
             System.out.println("ERROR " + e.getMessage());
         }
-        System.out.println("noticia geral: " + noticiaGeral);
         noticiaGeral += fillScript(noticia,keywordsTemplate);
-        System.out.println("noticia geral 2: " + noticiaGeral);
 
 
         if (values.getKeywords().get("COMPETICAO") > 0 && competicao) {
@@ -396,7 +394,6 @@ public class TemplateManager {
                 values.putValueInMap("COMPETICAO","em todas as competicoes");
 
         }
-        System.out.println("chachada");
         return templateIdPlusSizeMap.get(template);
     }
 
@@ -405,19 +402,15 @@ public class TemplateManager {
         try {
 
             //codigo para ir buscar a bd das babes
-
+            System.out.println("In fillScript");
             ExternalDBAccess eDBA = new ExternalDBAccess();
 
             Values templateValues =  eDBA.getValues(keywordsTemplate, idjog);
 
             noticiaLexer lexer = new noticiaLexer(CharStreams.fromString(template));
-            System.out.println("checkpoint1");
             CommonTokenStream stream = new CommonTokenStream(lexer);
-            System.out.println("checkpoint2");
             noticiaParser noticiasParser = new noticiaParser(stream);
-            System.out.println("checkpoint3");
             StringBuilder noticia = new StringBuilder();
-            System.out.println("checkpoint4");
             noticiasParser.noticias(templateValues, noticia);
 
 

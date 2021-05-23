@@ -34,9 +34,8 @@ public class ExternalDBAccess {
 
             Statement select = conn.createStatement();
             String sql = "SELECT nome_completo FROM jogador where id_jogador = " + idjog + ";";
-            System.out.println(sql);
+            //System.out.println(sql);
             ResultSet rs = select.executeQuery(sql);
-            System.out.println("-------------------------------------");
             String[] result = keys.split(",");
             int x = 0;
             while (rs.next()) {
@@ -78,7 +77,6 @@ public class ExternalDBAccess {
             System.out.println(sql);
             ResultSet rs = select.executeQuery(sql);
             if (rs == null) return values;
-            System.out.println("-------------------------------------");
             String[] result = keys.split(",");
             int x =0;
             while (rs.next()) {
@@ -113,7 +111,7 @@ public class ExternalDBAccess {
         //"NR_GOLOS_JOG_TOTAL", "NR_JOGOS_JOG_TOTAL", "CLUBE", "COMPETICAO", "TREINADOR", "ARBITRO", "JORNADA", "RESULTADO_JOGO", "CASA/FORA", "ADVERSARIO", "ESTADIO", "LOCALIZACAO", "MARCADOR_JORNADA", "ESTREIA_JOG", "RESULTADO_ESTREIA", "NR_GOLOS_JOG_JR", "NR_JOGOS_SGOLOS_JOG", "NOME_TOP", "NR_JOGOS_TOP", "NR_GOLOS_TOP", "NR_GOLOS_JOG_EPOCA", "NR_JOGOS_JOG_EPOCA", "NR_GOLOS_JOG_EPOCA_ANT", "NR_JOGOS_JOG_EPOCA_ANT");
 
 
-        for(String keyword : usedkeystemp){System.out.println("keyword:" + keyword);
+        for(String keyword : usedkeystemp){
             if(keyword.equals("NOME_JOG") || keyword.equals("IDADE_JOG") ||  keyword.equals("POS_JOG") || keyword.equals("NAC_JOG")){
 
                 if(!tables.contains(keyword)) {
