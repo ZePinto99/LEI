@@ -27,17 +27,17 @@ public class Values {
     }
 
     public void fillValuesMap(){
-        values.put("NOME_JOG", "Ricardo Horta");
-        values.put("IDADE_JOG", "26");
-        values.put("POS_JOG", "extremo esquerdo");
-        values.put("NAC_JOG", "Portugal");
-        values.put("NR_GOLOS_JOG_TOTAL", "63");
-        values.put("NR_JOGOS_JOG_TOTAL", "155");
+        values.put("NOME_JOG", "Candido Faisca");
+        values.put("IDADE_JOG", "76");
+        values.put("POS_JOG", "ponta de banco esquerdo");
+        values.put("NAC_JOG", "Quatar");
+        values.put("NR_GOLOS_JOG_TOTAL", "21112");
+        values.put("NR_JOGOS_JOG_TOTAL", "-1");
         values.put("CLUBE", "Sporting Clube de Braga");
-        values.put("COMPETICAO", "na Liga NOS");
-        values.put("TREINADOR", "Carlos Carvalhal");
+        values.put("COMPETICAO", "na Liga da esquina");
+        values.put("TREINADOR", "Ninguem de jeito");
         values.put("ARBITRO", "Artur Soares Dias");
-        values.put("JORNADA", "25");
+        values.put("JORNADA", "11111");
         values.put("RESULTADO_JOGO", "perdeu");
         values.put("CASA/FORA", "fora");
         values.put("ADVERSARIO", "Maritimo");
@@ -46,14 +46,14 @@ public class Values {
         values.put("MARCADOR_JORNADA", "1-0");
         values.put("ESTREIA_JOG", "5/9/2017");
         values.put("RESULTADO_ESTREIA", "1-0");
-        values.put("NR_GOLOS_JOG_JR", "0");
-        values.put("NR_JOGOS_SGOLOS_JOG", "0");
+        values.put("NR_GOLOS_JOG_JR", "-1");
+        values.put("NR_JOGOS_SGOLOS_JOG", "-2");
         values.put("NOME_TOP", "Alan");
         values.put("NR_JOGOS_TOP", "559");
         values.put("NR_GOLOS_TOP", "74");
-        values.put("NR_GOLOS_JOG_EPOCA", "8");
-        values.put("NR_JOGOS_JOG_EPOCA", "30");
-        values.put("NR_GOLOS_JOG_EPOCA_ANT", "15");
+        values.put("NR_GOLOS_JOG_EPOCA", "-11");
+        values.put("NR_JOGOS_JOG_EPOCA", "-130");
+        values.put("NR_GOLOS_JOG_EPOCA_ANT", "-115");
     }
 
     public Map<String, String> getValues() {

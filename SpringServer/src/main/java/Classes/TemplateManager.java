@@ -18,7 +18,7 @@ public class TemplateManager {
     String idjog;
     String valoralerta;
     String tipoComp;
-
+    String comp;
 
     private List<Integer> usedIds = new ArrayList<>();
     private List<Integer> usedVersions = new ArrayList<>();
@@ -39,7 +39,7 @@ public class TemplateManager {
     public TemplateManager(String id) {
         values = new Values(id);
         values.fillValuesMap();
-        tamanhoMax = 110;
+        tamanhoMax = 80;
     }
 
 
@@ -83,7 +83,7 @@ public class TemplateManager {
             System.out.println("ERROR " + e.getMessage());
         }
         ExternalDBAccess eDBA = new ExternalDBAccess();
-
+        comp = eDBA.getComp(tipoComp);
         //escolher 1o template
         noticiaGeral = "Titulo: " + getTitulo() + " " + eDBA.getName(idjog) + " \n\n" ;
         int templateId = selectTemplate();
@@ -182,8 +182,6 @@ public class TemplateManager {
         if (templateId == -1) return;
         updateWithSelectedTemplate(templateId);
 
-        //Temos de ver se passou do limite ou se está perto de passar
-        System.out.println("Tamanho atual: " + tamanho);
         if (tamanho < tamanhoMax) {
 
             size++;
@@ -405,7 +403,7 @@ public class TemplateManager {
             System.out.println("In fillScript");
             ExternalDBAccess eDBA = new ExternalDBAccess();
 
-            Values templateValues =  eDBA.getValues(keywordsTemplate, idjog);
+            Values templateValues =  eDBA.getValues(keywordsTemplate, idjog, comp, tipoComp);
 
             noticiaLexer lexer = new noticiaLexer(CharStreams.fromString(template));
             CommonTokenStream stream = new CommonTokenStream(lexer);

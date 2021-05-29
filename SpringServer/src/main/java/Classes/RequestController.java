@@ -21,16 +21,12 @@ public class RequestController {
 		String noticia = templateManager.getFirstTemplate(tg);
 
 
-		//Method to get info
-		System.out.println(noticia);
-		//JsonConverter
 		return noticia;
 	}
 
 	@PostMapping("/getNoticia")
 	public String getNoticia(@RequestBody GetNoticias tg) {
 
-		System.out.println("----------------");
 		String json = "{ \"noticia\" : ";
 		json += new Gson().toJson( tg.getNoticiaString() );
 		json += " }";
@@ -40,7 +36,6 @@ public class RequestController {
 	@PostMapping("/getNoticias")
 	public String getNoticias() {
 		GetNoticias tg = new GetNoticias("-1", "-1");
-		System.out.println("----------------");
 
 
 		String json = "{ \"noticia\" : ";
