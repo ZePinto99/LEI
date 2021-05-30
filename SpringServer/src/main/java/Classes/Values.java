@@ -27,33 +27,33 @@ public class Values {
     }
 
     public void fillValuesMap(){
-        values.put("NOME_JOG", "Candido Faisca");
-        values.put("IDADE_JOG", "76");
-        values.put("POS_JOG", "ponta de banco esquerdo");
-        values.put("NAC_JOG", "Quatar");
-        values.put("NR_GOLOS_JOG_TOTAL", "21112");
-        values.put("NR_JOGOS_JOG_TOTAL", "-1");
+        values.put("NOME_JOG", "_Erro_Nome_");
+        values.put("IDADE_JOG", "_Erro_Idade_");
+        values.put("POS_JOG", "_Erro_Pos_");
+        values.put("NAC_JOG", "_Erro_Pais_");
+        values.put("NR_GOLOS_JOG_TOTAL", "_Erro_Jogos_");
+        values.put("NR_JOGOS_JOG_TOTAL", "_Erro_NR_JOGOS_JOG_TOTAL");
         values.put("CLUBE", "Sporting Clube de Braga");
-        values.put("COMPETICAO", "na Liga da esquina");
-        values.put("TREINADOR", "Ninguem de jeito");
-        values.put("ARBITRO", "Artur Soares Dias");
-        values.put("JORNADA", "11111");
-        values.put("RESULTADO_JOGO", "perdeu");
-        values.put("CASA/FORA", "fora");
-        values.put("ADVERSARIO", "Maritimo");
-        values.put("ESTADIO", "Estádio dos Barreiros");
-        values.put("LOCALIZACAO", "Madeira");
-        values.put("MARCADOR_JORNADA", "1-0");
-        values.put("ESTREIA_JOG", "5/9/2017");
-        values.put("RESULTADO_ESTREIA", "1-0");
-        values.put("NR_GOLOS_JOG_JR", "-1");
-        values.put("NR_JOGOS_SGOLOS_JOG", "-2");
-        values.put("NOME_TOP", "Alan");
-        values.put("NR_JOGOS_TOP", "559");
-        values.put("NR_GOLOS_TOP", "74");
-        values.put("NR_GOLOS_JOG_EPOCA", "-11");
-        values.put("NR_JOGOS_JOG_EPOCA", "-130");
-        values.put("NR_GOLOS_JOG_EPOCA_ANT", "-115");
+        values.put("COMPETICAO", "Erro_COMPETICAO_Não_Mapeado");
+        values.put("TREINADOR", "Erro_TREINADOR_Não_Mapeado");
+        values.put("ARBITRO", "Erro_ARBITRO_Não_Mapeado");
+        values.put("JORNADA", "Erro_Jornada");
+        values.put("RESULTADO_JOGO", "Erro_RESULTADO_JOGO");
+        values.put("CASA/FORA", "Erro_CASAFORA_Não_Mapeado");
+        values.put("ADVERSARIO", "Erro_Adversario");
+        values.put("ESTADIO", "Erro_Estadio");
+        values.put("LOCALIZACAO", "erro_Localizacao_Não_Mapeado");
+        values.put("MARCADOR_JORNADA", "Erro_MARCADOR_JORNADA");
+        values.put("ESTREIA_JOG", "Erro_ESTREIA_JOG");
+        values.put("RESULTADO_ESTREIA", "Erro_RESULTADO_ESTREIA");
+        values.put("NR_GOLOS_JOG_JR", "Erro_NR_GOLOS_JOG_JR_Não_Mapeado");
+        values.put("NR_JOGOS_SGOLOS_JOG", "Erro_NR_JOGOS_SGOLOS_JOG_Não_Mapeado");
+        values.put("NOME_TOP", "Erro_Nome_Top_Não_Mapeado");
+        values.put("NR_JOGOS_TOP", "Erro_NR_JOGOS_TOP_Não_Mapeado");
+        values.put("NR_GOLOS_TOP", "Erro_NR_GOLOS_TOP_Não_Mapeado");
+        values.put("NR_GOLOS_JOG_EPOCA", "Erro_NR_GOLOS_JOG_EPOCA");
+        values.put("NR_JOGOS_JOG_EPOCA", "Erro_NR_JOGOS_JOG_EPOCA_Não_Mapeado");
+        values.put("NR_GOLOS_JOG_EPOCA_ANT", "Erro_NR_GOLOS_JOG_EPOCA_ANT_Não_Mapeado");
     }
 
     public Map<String, String> getValues() {

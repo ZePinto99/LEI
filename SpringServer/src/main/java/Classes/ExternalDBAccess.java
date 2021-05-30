@@ -69,7 +69,7 @@ public class ExternalDBAccess {
 
             Statement select = conn.createStatement();
             String sql = "SELECT nome FROM CompeticaoNome where idCompeticaoNome = " + idComp + ";";
-            //System.out.println(sql);
+            System.out.println(sql);
             ResultSet rs = select.executeQuery(sql);
             String[] result = keys.split(",");
             int x = 0;
@@ -91,6 +91,7 @@ public class ExternalDBAccess {
 
 
     public Values getValues(Map<String, Integer> keywords, String idjog, String comp, String idComp){
+        System.out.println("Begin Integration");
         this.keywords = keywords;
         values = new Values(idjog);
         this.idComp = idComp;
@@ -145,16 +146,27 @@ public class ExternalDBAccess {
             ResultSet rs;
             if (!tabelas.equals("") && !keys.equals("")) {
                 sql = "SELECT " + keys + " FROM  " + tabelas + " where 1 = 1 " + isJogo + whereclause + ";";
-                System.out.println("Jog and Comp +" + sql);
+                System.out.println(sql);
+
                 rs = select.executeQuery(sql);
                 if (rs == null) return;
                 result = keys.split(",");
                 x = 0;
                 while (rs.next()) {
                     while (x < result.length) {
-                        System.out.println(result[x] + " --- " + rs.getString(x + 1));
-                        values.putValueInMap(keyWordChange(result[x]), rs.getString(x + 1));
-                        x++;
+                        if(result[x].equals("data.ano")){
+                            String ano = rs.getString(x + 1);
+                            String mes = rs.getString(x + 2);
+                            String dia = rs.getString(x + 3);
+                            x += 2;
+
+                            String dataText = ano + "/" + mes + "/" + dia;
+                            values.putValueInMap("ESTREIA_JOG", dataText);
+                        }else {
+
+                            values.putValueInMap(keyWordMapping(result[x]), rs.getString(x + 1));
+                            x++;
+                        }
                     }
                 }
             }
@@ -217,12 +229,21 @@ public class ExternalDBAccess {
                 }
 
             }
-            if(addtable.equals("jogo") && ( keyword.equals("NR_JOGOS_JOG_EPOCA") || keyword.equals("NR_GOLOS_JOG_TOTAL")  || keyword.equals("JORNADA"))){
+            if(addtable.equals("jogo") && ( keyword.equals("NR_JOGOS_JOG_EPOCA") || keyword.equals("NR_GOLOS_JOG_TOTAL")  || keyword.equals("JORNADA") || keyword.equals("NR_JOGOS_JOG_TOTAL") || keyword.equals("NR_GOLOS_JOG_EPOCA"))){
 
                 if(!tables.contains(keyword)) {
                     switch (keyword){
                         case "NR_GOLOS_JOG_TOTAL":
                             usedkeys.add("count(golo.idGolo)");
+                            if(!tables.contains("golo")) {
+                                tables.add("golo");
+                                tables.add("jogador_has_jogo");
+
+                            }
+                            whereclause += "and Jogador_has_Jogo_id_jogador = "  + idJog +" and Jogador_has_Jogo_id_jogador = jogador_has_jogo.id_jogador and Jogador_has_Jogo_idJogo = jogador_has_jogo.idJogo and Jogador_has_Jogo_idJogo = jogo.idJogo and jogador_has_jogo.idJogo = jogo.idJogo and jogo.idcompeticao = " + idComp+  " ";
+                            break;
+                        case "NR_GOLOS_JOG_EPOCA":
+                            usedkeys.add("count(golo.idGolo) ");
                             if(!tables.contains("golo")) {
                                 tables.add("golo");
                                 tables.add("jogador_has_jogo");
@@ -238,15 +259,23 @@ public class ExternalDBAccess {
                                 tables.add("jogador_has_jogo");
 
                             }
-                            whereclause += " and jogador_has_jogo.id_jogador = " + idJog + " and Jogo.idJogo = jogador_has_jogo.id_jogador and Jogo.idCompeticao =" + idComp   ;
+                            whereclause += " and jogador_has_jogo.id_jogador = " + idJog + " and Jogo.idJogo = jogador_has_jogo.idJogo and Jogo.idCompeticao =" + idComp   ;
+                        case "NR_JOGOS_JOG_TOTAL":
+                            if(!usedkeys.contains("count(distinct jogo.idJogo) as jogos"))
+                                usedkeys.add("count(distinct jogo.idJogo) as jogos");
+                            if(!tables.contains("golo")) {
+                                tables.add("golo");
+                                tables.add("jogador_has_jogo");
+
+                            }
+                            whereclause += " and jogador_has_jogo.id_jogador = " + idJog + " and Jogo.idJogo = jogador_has_jogo.idJogo and Jogo.idCompeticao =" + idComp   ;
                         case "JORNADA":
                             if(!usedkeys.contains("count(distinct jogo.idJogo )"))
                                 usedkeys.add("count(distinct jogo.idJogo )");
                             if(!tables.contains("epoca")) {
                                 tables.add("epoca");
-
                             }
-                            whereclause += " and jogo.idEpoca = epoca.idEpoca and anos = \'2020-2021\' and nd jogo.idCompeticao = " + idComp + " "   ;
+                            whereclause += " and jogo.idEpoca = epoca.idEpoca and anos = \'2020-2021\' and jogo.idCompeticao = " + idComp + " "   ;
 
 
                     }
@@ -261,15 +290,17 @@ public class ExternalDBAccess {
                         tables.add("jogo");
                         tables.add("clube");
                         tables.add("jogador_has_jogo");
+                        tables.add("estadio");
+                        tables.add("data");
                         if(usedkeystemp.contains("ESTREIA_JOG")){
-                            if(!usedkeys.contains("clube.nome,jogo.resultado "))
-                                usedkeys.add("clube.nome,jogo.resultado ");
-                            whereclause += "and jogador_has_jogo.id_jogador = " + idJog + " and jogo.idClube = clube.idClube and jogo.idJogo = jogador_has_jogo.idJogo order by jogador_has_jogo.idJogo ASC limit 1;";
+                            if(!usedkeys.contains("clube.nome,jogo.resultado ,estadio.nome,data.ano,data.mes,data.dia"))
+                                usedkeys.add("clube.nome,jogo.resultado ,estadio.nome,data.ano,data.mes,data.dia");
+                            whereclause += "and jogador_has_jogo.id_jogador = " + idJog + " and jogo.idClube = clube.idClube and jogo.idJogo = jogador_has_jogo.idJogo and jogo.idEstadio = estadio.idEstadio and jogo.id_data = Data.id_data and jogo.idCompeticao = " + idComp + " order by jogador_has_jogo.idJogo ASC limit 1";
                         }
                         else {
-                            if(!usedkeys.contains("clube.nome,jogo.resultado"))
-                                usedkeys.add("clube.nome,jogo.resultado");
-                            whereclause += " and jogador_has_jogo.id_jogador =" + idJog + " and jogo.idClube = clube.idClube and jogo.idJogo = jogador_has_jogo.idJogo order by jogo.idJogo DESC limit 1;";
+                            if(!usedkeys.contains("clube.nome,jogo.resultado,estadio.nome"))
+                                usedkeys.add("clube.nome,jogo.resultado,estadio.nome");
+                            whereclause += " and jogador_has_jogo.id_jogador =" + idJog + " and jogo.idClube = clube.idClube and jogo.idJogo = jogador_has_jogo.idJogo and jogo.idEstadio = estadio.idEstadio and jogo.idCompeticao = " + idComp +   " order by jogo.idJogo  DESC limit 1";
 
                         }
                 }
@@ -305,7 +336,7 @@ public class ExternalDBAccess {
         }
     }
 
-    private String keyWordChange(String key){
+    private String keyWordMapping(String key){
         switch (key){
             case "jogador.nome":
                 return "NOME_JOG";
@@ -331,6 +362,14 @@ public class ExternalDBAccess {
                 return "RESULTADO_ESTREIA";
             case "pais.nome":
                 return "NAC_JOG";
+            case "estadio.nome":
+                return "ESTADIO";
+            case "data.ano,data.mes,data.dia":
+                return "ESTREIA_JOG";
+            case "count(distinct jogo.idJogo) as jogos":
+                return "NR_JOGOS_JOG_TOTAL";
+            case "count(golo.idGolo) ":
+                return "NR_GOLOS_JOG_EPOCA";
         }
         return "";
     }
