@@ -107,72 +107,12 @@ public class ExternalDBAccess {
 
             Statement select = conn.createStatement();
 
+            //checkTabelasJogardorAndComp("jogador");
+            executeQuery(select,"jogador");
 
+            executeQuery(select,"jogo");
 
-            checkTabelasJogardorAndComp("jogador");
-
-            String sql;
-            String[] result;
-            int x;
-            ResultSet rs;
-            if(!tabelas.equals("") && !keys.equals("")) {
-                sql = "SELECT " + keys + " FROM  " + tabelas + " where jogador.id_jogador = " + idjog + whereclause + ";";
-                System.out.println("Jog and Comp +" + sql);
-                rs = select.executeQuery(sql);
-                if (rs == null) return values;
-                result = keys.split(",");
-                x = 0;
-                while (rs.next()) {
-                    while (x < result.length) {
-                        System.out.println(result[x] + " --- " + rs.getString(x + 1));
-                        values.putValueInMap(keyWordChange(result[x]), rs.getString(x + 1));
-                        x++;
-                    }
-                }
-            }
-
-            keys ="";
-            tabelas = "";
-            whereclause = "";
-            checkTabelasJogardorAndComp("jogo");
-            if(!tabelas.equals("") && !keys.equals("") ) {
-
-                sql = "SELECT " + keys + " FROM " + tabelas + " where 1 = 1 " + whereclause + ";";
-                System.out.println("Jog and Comp +" + sql);
-                rs = select.executeQuery(sql);
-                if (rs == null) return values;
-                result = keys.split(",");
-                x = 0;
-                while (rs.next()) {
-                    while (x < result.length) {
-                        System.out.println(result[x] + " --- " + rs.getString(x + 1));
-                        values.putValueInMap(keyWordChange(result[x]), rs.getString(x + 1));
-                        x++;
-                    }
-                }
-            }
-
-            keys ="";
-            tabelas = "";
-            whereclause = "";
-            checkTabelasJogardorAndComp("adversario");
-            if(!tabelas.equals("") && !keys.equals("")) {
-
-                sql = "SELECT " + keys + " FROM " + tabelas + " where 1 = 1 " + whereclause + ";";
-                System.out.println("Jog and Comp +" + sql);
-                rs = select.executeQuery(sql);
-                if (rs == null) return values;
-                result = keys.split(",");
-                x = 0;
-                while (rs.next()) {
-                    while (x < result.length) {
-                        System.out.println(result[x] + " --- " + rs.getString(x + 1));
-                        values.putValueInMap(keyWordChange(result[x]), rs.getString(x + 1));
-                        x++;
-                    }
-                }
-
-            }
+            executeQuery(select,"adversario");
 
 
             conn.close();
@@ -186,6 +126,43 @@ public class ExternalDBAccess {
 
 
         return values;
+    }
+
+
+    private void executeQuery(Statement select, String table){
+
+        keys ="";
+        tabelas = "";
+        whereclause = "";
+        String  isJogo = "";
+        if(table.equals("jogador"))
+            isJogo = " and jogador.id_jogador = " + idJog;
+        checkTabelasJogardorAndComp(table);
+        try {
+            String sql;
+            String[] result;
+            int x;
+            ResultSet rs;
+            if (!tabelas.equals("") && !keys.equals("")) {
+                sql = "SELECT " + keys + " FROM  " + tabelas + " where 1 = 1 " + isJogo + whereclause + ";";
+                System.out.println("Jog and Comp +" + sql);
+                rs = select.executeQuery(sql);
+                if (rs == null) return;
+                result = keys.split(",");
+                x = 0;
+                while (rs.next()) {
+                    while (x < result.length) {
+                        System.out.println(result[x] + " --- " + rs.getString(x + 1));
+                        values.putValueInMap(keyWordChange(result[x]), rs.getString(x + 1));
+                        x++;
+                    }
+                }
+            }
+        }
+
+        catch (Exception e){
+            System.out.println("ERROR: " + e.getMessage());
+        }
     }
 
     private String checkTabelasJogardorAndComp(String addtable){
@@ -204,7 +181,8 @@ public class ExternalDBAccess {
                 usedkeystemp.add(keyword);
         }
 
-        for(String keyword : usedkeystemp){ System.out.println(keyword);
+        for(String keyword : usedkeystemp){
+
             if( addtable.equals("jogador") &&
                     (keyword.equals("NOME_JOG") ||
                             keyword.equals("IDADE_JOG") ||  keyword.equals("POS_JOG") || keyword.equals("NAC_JOG"))){
@@ -250,7 +228,7 @@ public class ExternalDBAccess {
                                 tables.add("jogador_has_jogo");
 
                             }
-                            whereclause += " and Jogador_has_Jogo_id_jogador = " + idJog + " and jogador_has_jogo.id_jogador = Jogador_has_Jogo_id_jogador and Jogo.idCompeticao =" + idComp   ;
+                            whereclause += "and Jogador_has_Jogo_id_jogador = "  + idJog +" and Jogador_has_Jogo_id_jogador = jogador_has_jogo.id_jogador and Jogador_has_Jogo_idJogo = jogador_has_jogo.idJogo and Jogador_has_Jogo_idJogo = jogo.idJogo and jogador_has_jogo.idJogo = jogo.idJogo and jogo.idcompeticao = " + idComp+  " ";
                             break;
                         case "NR_JOGOS_JOG_EPOCA":
                             if(!usedkeys.contains("count(distinct jogo.idJogo)"))
@@ -268,7 +246,7 @@ public class ExternalDBAccess {
                                 tables.add("epoca");
 
                             }
-                            whereclause += " and jogo.idEpoca = epoca.idEpoca and anos = \'2020-2021\'"   ;
+                            whereclause += " and jogo.idEpoca = epoca.idEpoca and anos = \'2020-2021\' and nd jogo.idCompeticao = " + idComp + " "   ;
 
 
                     }
