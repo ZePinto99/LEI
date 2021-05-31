@@ -4,18 +4,17 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 
-public class Classificate {
-    String id;
-    String rate;
+public class ChangeFinalText {
 
-    public Classificate(String id, String rate) {
+    String id;
+    String noticiaAlterada;
+
+    public ChangeFinalText(String id, String noticiaAlterada) {
         this.id = id;
-        this.rate = rate;
+        this.noticiaAlterada = noticiaAlterada;
     }
 
-
-
-    public void classificate(){
+    public void changeText(){
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
@@ -24,13 +23,9 @@ public class Classificate {
                             + "password" + "&useTimezone=true&serverTimezone=UTC");
 
             Statement insert = conn.createStatement();
-            String likeOrDislike ="";
-            if(rate.equals("1"))
-                likeOrDislike = "history.like";
-            else
-                likeOrDislike = "history.dislike";
+
             //INSERT INTO history VALUES (DEFAULT, NOW(), titulo, text, final_text, asssinatura, used_templates, tamanho, 0, 0);
-            String sql = "UPDATE history Set " + likeOrDislike +" = " +likeOrDislike + " + 1 where id_noticia =" + id+ ";";
+            String sql = "UPDATE history Set final_text = \""+ noticiaAlterada + "\" where id_noticia =" + id+ ";";
             System.out.println("SQL-> " + sql);
             insert.execute(sql);
 

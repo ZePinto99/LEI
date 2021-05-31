@@ -52,4 +52,13 @@ public class RequestController {
 		return;
 	}
 
+	@PostMapping("/ChangeFinalText")
+	public void setClassification(@RequestBody ChangeFinalText cft) {
+
+		cft.changeText();
+
+
+		return;
+	}
+
 }
