@@ -27,9 +27,8 @@ public class RequestController {
 	@PostMapping("/getNoticia")
 	public String getNoticia(@RequestBody GetNoticias tg) {
 
-		String json = "{ \"noticia\" : ";
+		String json = "";
 		json += new Gson().toJson( tg.getNoticiaString() );
-		json += " }";
 		return json;
 	}
 
@@ -38,10 +37,19 @@ public class RequestController {
 		GetNoticias tg = new GetNoticias("-1", "-1");
 
 
-		String json = "{ \"noticia\" : ";
+		String json = "{ \"noticias\" : ";
 		json += new Gson().toJson( tg.getNoticias());
 		json += " }";
 		return json;
+	}
+
+	@PostMapping("/classificate")
+	public void setClassification(@RequestBody Classificate cl) {
+
+		cl.classificate();
+
+
+		return;
 	}
 
 }
