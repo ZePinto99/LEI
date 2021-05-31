@@ -10,8 +10,6 @@ ALTER TABLE keywords AUTO_INCREMENT = 1;
 ALTER TABLE template AUTO_INCREMENT = 1;
 ALTER TABLE history AUTO_INCREMENT = 1;
 
-
-
 /**************  QUERY TESTING **************/ 
 
 /*
@@ -19,5 +17,5 @@ SELECT text, keywords, id_template, size FROM template, version WHERE template.v
 SELECT text, keywords, id_template, size, id_version FROM template, version WHERE template.version = id_version AND version.type = 1";
 SELECT * FROM keywords WHERE id_keywords = 1;
 
-INSERT INTO history VALUES (DEFAULT, NOW(), 'blablabla', 1, null, null, null, null);
+INSERT INTO history VALUES (DEFAULT, NOW(), titulo, text, final_text, asssinatura, used_templates, tamanho, 0, 0);
 */
