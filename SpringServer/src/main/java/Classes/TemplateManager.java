@@ -23,6 +23,8 @@ public class TemplateManager {
     private List<Integer> usedIds = new ArrayList<>();
     private List<Integer> usedVersions = new ArrayList<>();
     private Values values;
+    String titulo;
+    String fimNoticia;
     String noticia;
     String noticiaGeral;
     boolean competicao = true;
@@ -85,7 +87,7 @@ public class TemplateManager {
         ExternalDBAccess eDBA = new ExternalDBAccess();
         comp = eDBA.getComp(tipoComp);
         //escolher 1o template
-        noticiaGeral = "Titulo: " + getTitulo() + " " + eDBA.getName(idjog) + " \n\n" ;
+        titulo =  getTitulo() + " " + eDBA.getName(idjog) ;
         int templateId = selectTemplate();
         if (templateId != -1) updateWithSelectedTemplate(templateId);
 
@@ -94,7 +96,7 @@ public class TemplateManager {
 
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        noticiaGeral += ("\n\nNotícia da autoria do gerador automático de notícias do Sporting Clube de Braga em " + formatter.format(date));
+        fimNoticia = ("Notícia da autoria do gerador automático de notícias do Sporting Clube de Braga em " + formatter.format(date));
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -105,9 +107,9 @@ public class TemplateManager {
 
             Statement insert = conn.createStatement();
 
-
-            String sql = "INSERT INTO history VALUES(DEFAULT, NOW(), '" + noticiaGeral + "','" + listToSqlQuery(usedIds) + "');";
-
+            //INSERT INTO history VALUES (DEFAULT, NOW(), titulo, text, final_text, asssinatura, used_templates, tamanho, 0, 0);
+            String sql = "INSERT INTO history VALUES(DEFAULT, NOW(), '"+titulo+ "','"+ noticiaGeral + "','"+ noticiaGeral + "','" + fimNoticia + "','" + listToSqlQuery(usedIds) + "'," + tamanho + ",0,0);";
+            System.out.println("SQL-> " + sql);
             insert.execute(sql);
 
         } catch (Exception e) {
@@ -115,7 +117,7 @@ public class TemplateManager {
         }
 
 
-        return noticiaGeral;
+        return titulo + "\n\n" + noticiaGeral + "\n\n" + fimNoticia;
     }
 
     public String getTitulo() {

@@ -26,9 +26,9 @@ public class GetNoticias {
     }
 
 
-    public String getNoticiaString() {
+    public Noticia getNoticiaString() {
 
-        String noticia = "";
+        Noticia noticia = new Noticia();
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
@@ -39,12 +39,14 @@ public class GetNoticias {
 
             Statement select = conn.createStatement();
 
-            String sql = "SELECT text FROM history WHERE id_history = " + id + " limit 1;";
+            String sql = "SELECT text, titulo, assinatura FROM history WHERE id_noticia = " + id + " limit 1;";
 
             ResultSet rs = select.executeQuery(sql);
-            if (rs == null) return "";
+            if (rs == null) return noticia;
             while (rs.next()) {
-                noticia = rs.getString(1);
+                noticia.noticia    = rs.getString(1);
+                noticia.titulo     = rs.getString(2);
+                noticia.assinatura = rs.getString(3);
             }
 
 
@@ -56,9 +58,9 @@ public class GetNoticias {
         return noticia;
     }
 
-    public List<String> getNoticias(){
+    public List<Noticia> getNoticias(){
 
-        List<String> noticias = new ArrayList<>();
+        List<Noticia> noticias = new ArrayList<>();
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
@@ -69,15 +71,18 @@ public class GetNoticias {
 
             Statement select = conn.createStatement();
 
-            String sql = "SELECT text FROM history order by id_history desc limit 5;";
+            String sql = "SELECT text, titulo, assinatura FROM history order by id_noticia desc limit 5;";
 
 
             int tt=0;
             ResultSet rs = select.executeQuery(sql);
             if (rs == null) return noticias;
             while (rs.next() && tt<5) {
-                tt++;
-                noticias.add(rs.getString(1) );
+                Noticia noticia = new Noticia();
+                noticia.noticia    = rs.getString(1);
+                noticia.titulo     = rs.getString(2);
+                noticia.assinatura = rs.getString(3);
+                noticias.add(noticia);
             }
 
 
