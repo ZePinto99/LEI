@@ -11,7 +11,7 @@ types:
 	2.    Golos marcados (total) 
 	3.    Número jogos nesta época
 	4.    Número jogos (total)
-*/
+*/	
 
 -- version 1 - assunto: jogos totais pelo clube (type 4)
 INSERT INTO version VALUES (1,4);
