@@ -37,6 +37,7 @@ public class TemplateManager {
     Map<Integer, String> templateIdPlusTemplateMap;
     Map<Integer, Integer> templateIdPlusSizeMap;
     Map<Integer, Integer> templateIdPlusVersionMap;
+    Map<Integer, Map<Integer, Integer>> templateClassification;
 
 
     public TemplateManager(String id) {
@@ -172,6 +173,38 @@ public class TemplateManager {
                 templateIdPlusVersionMap.put(rs.getInt(3), rs.getInt(5));
             }
 
+            //Get template Scores
+            String sql_score = "SELECT used_templates, history.like+history.dislike AS score FROM history";
+            rs = select.executeQuery(sql_score);
+            if (rs == null) return;
+            while (rs.next()) {
+                int score = rs.getInt(2);
+                String used_temps_stg = rs.getString(1);
+                List<String> used_temps = new ArrayList<String>(Arrays.asList(used_temps_stg.split(",")));
+
+                //Preencher map exterior
+                for (String used_temp : used_temps){
+                    Map<Integer, Integer> scoreRelation = new HashMap<>();
+                    //3
+                    try {
+                        scoreRelation = templateClassification.get(used_temp);
+
+                    }catch (Exception e){
+                        //Ignora porque o map interior ainda não existe
+                    }
+                    for (String used_temp2 : used_temps){
+                        //prob vou estar a adicionar o próprio template
+                        try {
+                            int score_atual = scoreRelation.get(Integer.parseInt(used_temp2));
+                            score += score_atual;
+                        } catch (Exception e){
+                        }
+                        scoreRelation.put(Integer.parseInt(used_temp2), score);
+
+                    }
+                    templateClassification.put(Integer.parseInt(used_temp), scoreRelation);
+                }
+            }
 
             conn.close();
 
