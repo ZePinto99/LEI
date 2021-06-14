@@ -39,7 +39,7 @@ public class GetNoticias {
 
             Statement select = conn.createStatement();
 
-            String sql = "SELECT text, titulo, assinatura FROM history WHERE id_noticia = " + id + " limit 1;";
+            String sql = "SELECT text, titulo, assinatura, final_text, id_noticia FROM history WHERE id_noticia = " + id + " limit 1;";
 
             ResultSet rs = select.executeQuery(sql);
             if (rs == null) return noticia;
@@ -47,6 +47,8 @@ public class GetNoticias {
                 noticia.noticia    = rs.getString(1);
                 noticia.titulo     = rs.getString(2);
                 noticia.assinatura = rs.getString(3);
+                noticia.finalText  = rs.getString(4);
+                noticia.id_noticia = rs.getString(5);
             }
 
 
@@ -71,17 +73,19 @@ public class GetNoticias {
 
             Statement select = conn.createStatement();
 
-            String sql = "SELECT text, titulo, assinatura FROM history order by id_noticia desc limit 5;";
+            String sql = "SELECT text, titulo, assinatura, final_text, id_noticia FROM history order by id_noticia desc limit 8;";
 
 
             int tt=0;
             ResultSet rs = select.executeQuery(sql);
             if (rs == null) return noticias;
-            while (rs.next() && tt<5) {
+            while (rs.next() && tt<8) {
                 Noticia noticia = new Noticia();
                 noticia.noticia    = rs.getString(1);
                 noticia.titulo     = rs.getString(2);
                 noticia.assinatura = rs.getString(3);
+                noticia.finalText  = rs.getString(4);
+                noticia.id_noticia = rs.getString(5);
                 noticias.add(noticia);
             }
 

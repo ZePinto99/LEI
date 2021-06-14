@@ -28,6 +28,7 @@ public class TemplateManager {
     String noticia;
     String noticiaGeral;
     boolean competicao = true;
+    int compSum = 0;
 
     int tamanho;
     int tamanhoMax;
@@ -86,6 +87,7 @@ public class TemplateManager {
         }
         ExternalDBAccess eDBA = new ExternalDBAccess();
         comp = eDBA.getComp(tipoComp);
+
         //escolher 1o template
         titulo =  getTitulo() + " " + eDBA.getName(idjog) ;
         int templateId = selectTemplate();
@@ -388,12 +390,7 @@ public class TemplateManager {
         noticiaGeral += fillScript(noticia,keywordsTemplate);
 
 
-        if (values.getKeywords().get("COMPETICAO") > 0 && competicao) {
-            competicao = false;
-            if(values.getValue("COMPETICAO").equals("na Liga NOS"))
-                values.putValueInMap("COMPETICAO","em todas as competicoes");
 
-        }
         return templateIdPlusSizeMap.get(template);
     }
 
@@ -406,7 +403,19 @@ public class TemplateManager {
             ExternalDBAccess eDBA = new ExternalDBAccess();
 
             Values templateValues =  eDBA.getValues(keywordsTemplate, idjog, comp, tipoComp);
+            if(keywordsTemplate.get("COMPETICAO") >=1 && competicao ){
+                compSum ++;
+                if(compSum >=2) {
+                    if (tipoComp.equals("1"))
+                        tipoComp = "2";
+                    else
+                        tipoComp = "1";
+                    compSum =0;
+                    comp = eDBA.getComp(tipoComp);
+                }
 
+
+            }
             noticiaLexer lexer = new noticiaLexer(CharStreams.fromString(template));
             CommonTokenStream stream = new CommonTokenStream(lexer);
             noticiaParser noticiasParser = new noticiaParser(stream);
