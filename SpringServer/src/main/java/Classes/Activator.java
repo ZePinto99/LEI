@@ -5,18 +5,20 @@ import java.util.*;
 public class Activator {
     private double e;
     private int constant;
+    private Map<Integer, Map<Integer, Integer>> templateClassification;
 
     //Possivelmente pode receber um map com as priority keywords de cada keyword
-    public Activator(int constant) {
+    public Activator(int constant, Map templateClassification) {
         this.constant = constant;
         e = 2.2204460492503130808472633361816;
+        templateClassification = templateClassification;
     }
 
     //função que calcula o score de um template
     //o templates score será a junção de todos da relação co todos os templates
     //isto vai implicar ao inserirmos cada template termos um de fazer puts às relações com templates que não existiam e atualizar os valore
     //de registos que já existem
-    public double tempScore(List<String> templateKeywords, Map<String, Integer> newsKeywords){//List<Integer> templatesUsed, Map <Integer, Integer> templatesScores){
+    public double tempScore(List<String> templateKeywords, Map<String, Integer> newsKeywords, List<Integer> templatesUsed, int templateId){
         int score = 0;
 
         //Não permite fazer escolher templates com certas keywords
@@ -37,16 +39,16 @@ public class Activator {
             score -= constant*occurrences;
         }
 
-        //percorre o mapa de templateScores e vê a relação do template com os templates que já pertencem à notícia
-        /*
+        //percorre a os templates já usados na notíca
         for (int usedTemplate : templatesUsed) {
             try{
+                //vamos buscar o map de classificações de cada template que já faz parte da notícia
+                Map<Integer, Integer> templatesScores = templateClassification.get(usedTemplate);
                 score += priorityScore(templateId, templatesScores);
             }catch (Exception e){
                 score += 0;
             }
         }
-        */
 
         //devolve um score/probabilidade entre 0 e 1
         double activationValue = sigmoid(score);
@@ -55,7 +57,7 @@ public class Activator {
     }
 
     //Dá zero se templateId não tiver no mapa de classificações
-    public int priorityScore(String templateId, Map <Integer, Integer> templatesScores){
+    public int priorityScore(int templateId, Map <Integer, Integer> templatesScores){
         int occures;
         try {
             occures = templatesScores.get(templateId);

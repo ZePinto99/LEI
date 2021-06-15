@@ -40,10 +40,10 @@ public class TemplateManager {
     Map<Integer, Map<Integer, Integer>> templateClassification;
 
 
-    public TemplateManager(String id) {
+    public TemplateManager(String id, int tamanhoMax) {
         values = new Values(id);
         values.fillValuesMap();
-        tamanhoMax = 80;
+        this.tamanhoMax = tamanhoMax;
     }
 
 
@@ -305,7 +305,7 @@ public class TemplateManager {
         double randProb = random.nextInt(1);
 
         //Criamos o Activator com o valor da constante
-        Activator activator = new Activator(500);
+        Activator activator = new Activator(500, templateClassification);
 
         double max = -1;
         int maxTmpId = -1;
@@ -324,7 +324,7 @@ public class TemplateManager {
 
             //Calculamos o score para o template ser selecionado com base nas suas keywords
             //recebe a lista de keywords do template e keywords já usadas na notícia
-            double templateProb = activator.tempScore(templateKeywords, keywordsAlreadyUsed);
+            double templateProb = activator.tempScore(templateKeywords, keywordsAlreadyUsed, usedIds, templateIndex);
             //Se o score do template bater o randProb e o tamanho do template for válido o template é logo selecionado
 
             if (templateProb > randProb && (templateIdPlusSizeMap.get(templateIndex) + tamanho) < tamanhoMax)
