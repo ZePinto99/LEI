@@ -60,6 +60,8 @@ public class TemplateManager {
         templateIdPlusSizeMap = new HashMap<>();
         templateIdPlusVersionMap = new HashMap<>();
         size = 1;
+        fillScoresMap();
+
         try {
 
 
@@ -90,7 +92,7 @@ public class TemplateManager {
         comp = eDBA.getComp(tipoComp);
 
         //escolher 1o template
-        titulo =  getTitulo() + " " + eDBA.getName(idjog) ;
+        titulo = getTitulo() + " " + eDBA.getName(idjog);
         int templateId = selectTemplate();
         if (templateId != -1) updateWithSelectedTemplate(templateId);
 
@@ -99,7 +101,7 @@ public class TemplateManager {
 
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        fimNoticia = ("Notícia da autoria do gerador automático de notícias do Sporting Clube de Braga em " + formatter.format(date));
+        fimNoticia = ("Notícia da autoria do gerador automático de notícias do Sporting Clube de Braga em " + formatter.format(date) + " - Tamanho aproximado: " + tamanho + " palavras.");
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -111,7 +113,7 @@ public class TemplateManager {
             Statement insert = conn.createStatement();
 
             //INSERT INTO history VALUES (DEFAULT, NOW(), titulo, text, final_text, asssinatura, used_templates, tamanho, 0, 0);
-            String sql = "INSERT INTO history VALUES(DEFAULT, NOW(), '"+titulo+ "','"+ noticiaGeral + "','"+ noticiaGeral + "','" + fimNoticia + "','" + listToSqlQuery(usedIds) + "'," + tamanho + ",0,0);";
+            String sql = "INSERT INTO history VALUES(DEFAULT, NOW(), '" + titulo + "','" + noticiaGeral + "','" + noticiaGeral + "','" + fimNoticia + "','" + listToSqlQuery(usedIds) + "'," + tamanho + ",0,0);";
             System.out.println("SQL-> " + sql);
             insert.execute(sql);
 
@@ -161,7 +163,6 @@ public class TemplateManager {
             //adicionar filtros na query para ver keyWords relevantes
 
 
-
             String sql = "SELECT text, keywords, id_template, size, version FROM template, keywords WHERE template.primary = 0 and id_template NOT IN (" + usedIdsString + ") and version NOT IN (" + usedVersionsString + ") and template.keywords = id_keywords " + keywordsSqlString(size) + ";";
 
             ResultSet rs = select.executeQuery(sql);
@@ -171,39 +172,6 @@ public class TemplateManager {
                 templateIdPlusTemplateMap.put(rs.getInt(3), rs.getString(1));
                 templateIdPlusSizeMap.put(rs.getInt(3), rs.getInt(4));
                 templateIdPlusVersionMap.put(rs.getInt(3), rs.getInt(5));
-            }
-
-            //Get template Scores
-            String sql_score = "SELECT used_templates, history.like+history.dislike AS score FROM history";
-            rs = select.executeQuery(sql_score);
-            if (rs == null) return;
-            while (rs.next()) {
-                int score = rs.getInt(2);
-                String used_temps_stg = rs.getString(1);
-                List<String> used_temps = new ArrayList<String>(Arrays.asList(used_temps_stg.split(",")));
-
-                //Preencher map exterior
-                for (String used_temp : used_temps){
-                    Map<Integer, Integer> scoreRelation = new HashMap<>();
-                    //3
-                    try {
-                        scoreRelation = templateClassification.get(used_temp);
-
-                    }catch (Exception e){
-                        //Ignora porque o map interior ainda não existe
-                    }
-                    for (String used_temp2 : used_temps){
-                        //prob vou estar a adicionar o próprio template
-                        try {
-                            int score_atual = scoreRelation.get(Integer.parseInt(used_temp2));
-                            score += score_atual;
-                        } catch (Exception e){
-                        }
-                        scoreRelation.put(Integer.parseInt(used_temp2), score);
-
-                    }
-                    templateClassification.put(Integer.parseInt(used_temp), scoreRelation);
-                }
             }
 
             conn.close();
@@ -294,7 +262,7 @@ public class TemplateManager {
 
         double sizeD = size;
         double valueD = valueOfKey + 1;
-        if ((sizeD) / valueD >= 1 )//&& (temaNoticia.equals("1") && t1.contains(key) || temaNoticia.equals("2") && t2.contains(key) || temaNoticia.equals("3") && t3.contains(key) || temaNoticia.equals("4") && t4.contains(key)))
+        if ((sizeD) / valueD >= 1)//&& (temaNoticia.equals("1") && t1.contains(key) || temaNoticia.equals("2") && t2.contains(key) || temaNoticia.equals("3") && t3.contains(key) || temaNoticia.equals("4") && t4.contains(key)))
             return true;
 
         return false;
@@ -376,7 +344,6 @@ public class TemplateManager {
     public int updateWithSelectedTemplate(int template) {
 
 
-
         System.out.println("In updateWithSelectedTemplate");
         usedIds.add(template);
 
@@ -420,8 +387,7 @@ public class TemplateManager {
         } catch (Exception e) {
             System.out.println("ERROR " + e.getMessage());
         }
-        noticiaGeral += fillScript(noticia,keywordsTemplate);
-
+        noticiaGeral += fillScript(noticia, keywordsTemplate);
 
 
         return templateIdPlusSizeMap.get(template);
@@ -435,15 +401,15 @@ public class TemplateManager {
             System.out.println("In fillScript");
             ExternalDBAccess eDBA = new ExternalDBAccess();
 
-            Values templateValues =  eDBA.getValues(keywordsTemplate, idjog, comp, tipoComp);
-            if(keywordsTemplate.get("COMPETICAO") >=1 && competicao ){
-                compSum ++;
-                if(compSum >=2) {
+            Values templateValues = eDBA.getValues(keywordsTemplate, idjog, comp, tipoComp);
+            if (keywordsTemplate.get("COMPETICAO") >= 1 && competicao) {
+                compSum++;
+                if (compSum >= 2) {
                     if (tipoComp.equals("1"))
                         tipoComp = "2";
                     else
                         tipoComp = "1";
-                    compSum =0;
+                    compSum = 0;
                     comp = eDBA.getComp(tipoComp);
                 }
 
@@ -464,5 +430,68 @@ public class TemplateManager {
         }
 
     }
+
+
+    public void fillScoresMap() {
+
+        //Get template Scores
+        templateClassification = new HashMap<>();
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            Connection conn = DriverManager.
+                    getConnection("jdbc:mysql://projetoleibd.cpjxfbj4rl9p.eu-west-3.rds.amazonaws.com:3306/mydb?user=Grupo58&password="
+                            + "password" + "&useTimezone=true&serverTimezone=UTC");
+
+            Statement select = conn.createStatement();
+            String sql_score = "SELECT used_templates, history.like - history.dislike AS score FROM history";
+            ResultSet rs = select.executeQuery(sql_score);
+            if (rs == null) return;
+
+            while (rs.next()) {
+                String used_temps_stg = rs.getString(1);
+                List<String> used_temps = new ArrayList<>(Arrays.asList(used_temps_stg.split(",")));
+
+                //Preencher map exterior
+                for (String used_temp : used_temps) {
+                    Map<Integer, Integer> scoreRelation = new HashMap<>();
+
+                    //3
+                    if (templateClassification.get(Integer.parseInt(used_temp)) != null) {
+                        scoreRelation = templateClassification.get(Integer.parseInt(used_temp));
+                    } else {
+                        scoreRelation = new HashMap<>();
+                    }
+
+                    for (String used_temp2 : used_temps) {
+                        if (used_temp2 == used_temp) continue;
+                        int score = rs.getInt(2);
+                        //prob vou estar a adicionar o próprio template
+                        if (scoreRelation.get(Integer.parseInt(used_temp2)) != null) {
+                            int score_atual = scoreRelation.get(Integer.parseInt(used_temp2));
+                            score += score_atual;
+                        }
+                        int insert = Integer.parseInt(used_temp2);
+                        scoreRelation.put(insert, score);
+                    }
+                    templateClassification.put(Integer.parseInt(used_temp), scoreRelation);
+                }
+            }
+                conn.close();
+
+        } catch (Exception e) {
+            System.out.println("ERROR " + e.getMessage());
+        }
+        /*
+        for (Map.Entry<Integer, Map<Integer, Integer>> entry : templateClassification.entrySet()) {
+            System.out.println("KEY " + entry.getKey() + " :");
+            for (Map.Entry<Integer, Integer> entry2 : templateClassification.get(entry.getKey()).entrySet()) {
+                System.out.println("Key: " + entry2.getKey().toString() + " Value: " + entry2.getValue().toString());
+            }
+        }
+        */
+    }
+
 
 }
