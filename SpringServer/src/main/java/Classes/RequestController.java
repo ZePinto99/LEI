@@ -1,6 +1,7 @@
 package Classes;
 
 import com.google.gson.Gson;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,37 +18,40 @@ public class RequestController {
 
 	@PostMapping("/getInfo")
 	public String getInfo(@RequestBody Tags tg) {
-		int standartSize = 50;
-		List<String> noticias = new ArrayList<>();
+		int standartSize = 40;
+		List<Noticia> noticias = new ArrayList<>();
 		//gerar 3 notícias com diferentes tamanhos
 		for (int i=1; i<=3; i++){
 			TemplateManager templateManager = new TemplateManager(tg.getIdJogador(), standartSize);
 
 			noticias.add(templateManager.getFirstTemplate(tg));
 		}
-		//gerar link de classificação
+
+
+		//Lista de endereços de email a enviar
+		List<String> tosend = Arrays.asList("testeLEIgrupo58@gmail.com"); //Lista de emails que vão receber a mensagem
+
+		//Criar o conteúdo do email se as notícias tiverem sido criadas com sucesso
+		String content = "";
+		if (!noticias.isEmpty()){
+			content = noticias.get(0).titulo + "\n";
+			for (Noticia noticia : noticias)
+				content += noticia.toString() + "\n\n";
+		}
 
 		//Enviar as notícias geradas por email
 		SendEmail sendEmail = new SendEmail();
-
-		//Criar corpo de notícia
-		String content = "As notícias geradas são:";
-		for (String noticia : noticias)
-			content += "\n\n" + noticia;
-		String finalContent = content;
-		////////////////////////
 		//Proceder ao envio do email
-		List<String> tosend = Arrays.asList("testeLEIgrupo58@gmail.com"); //Lista de emails que vão receber a mensagem
 		for (String tosend_email : tosend) {
+			String finalContent = content;
 			Runnable runnable = () -> {
-				sendEmail.run("testeLEIgrupo58@gmail.com", finalContent, "Notícia gerada");
+				sendEmail.run(tosend_email, finalContent, "Notícia gerada");
 			};
 			Thread t = new Thread(runnable);
 			t.start();
 		}
-		///////////////////////
 
-		return noticias.toString();
+		return content;
 	}
 
 	@PostMapping("/getNoticia")

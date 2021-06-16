@@ -2,6 +2,9 @@ package Classes;
 
 import java.sql.*;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
@@ -47,7 +50,7 @@ public class TemplateManager {
     }
 
 
-    public String getFirstTemplate(Tags tg) {
+    public Noticia getFirstTemplate(Tags tg) {
         noticia = "";
         temaNoticia = tg.getTipoAlerta();
         idjog = tg.getIdJogador();
@@ -121,8 +124,15 @@ public class TemplateManager {
             System.out.println("ERROR " + e.getMessage());
         }
 
+        //Ir buscar o id da notícia
 
-        return titulo + "\n\n" + noticiaGeral + "\n\n" + fimNoticia;
+        //Gera link
+        String link = link_generator(1); //PASSAR O ID DA NOTÍCIA
+
+
+        Noticia noticia = new Noticia(noticiaGeral, titulo, fimNoticia, "1", link); //PASSAR O ID DA NOTÍCIA
+
+        return noticia;
     }
 
     public String getTitulo() {
@@ -491,6 +501,21 @@ public class TemplateManager {
             }
         }
         */
+    }
+
+    private String link_generator(int id){
+        String link = "";
+        try {
+            Algorithm algorithm = Algorithm.HMAC256("GeradorDeNoticias");
+            String token = JWT.create()
+                    .withIssuer("auth0")
+                    .withClaim("id", id) //id da notícia
+                    .sign(algorithm);
+            link = "https://localhost:3000/noticiaGerada?token=" + token;
+        } catch (JWTCreationException exception){
+            //Invalid Signing configuration / Couldn't convert Claims.
+        }
+        return link;
     }
 
 
