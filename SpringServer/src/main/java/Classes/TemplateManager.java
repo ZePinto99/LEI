@@ -105,7 +105,7 @@ public class TemplateManager {
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         fimNoticia = ("Notícia da autoria do gerador automático de notícias do Sporting Clube de Braga em " + formatter.format(date) + " - Tamanho aproximado: " + tamanho + " palavras.");
-
+        Integer noticiaId = -1;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
@@ -120,6 +120,15 @@ public class TemplateManager {
             System.out.println("SQL-> " + sql);
             insert.execute(sql);
 
+            sql = "SELECT id_noticia FROM history ORDER By id_noticia DESC limit 1";
+
+            ResultSet rs = insert.executeQuery(sql);
+
+            while (rs.next()) {
+                noticiaId = rs.getInt(1);
+            }
+
+
         } catch (Exception e) {
             System.out.println("ERROR " + e.getMessage());
         }
@@ -127,10 +136,10 @@ public class TemplateManager {
         //Ir buscar o id da notícia
 
         //Gera link
-        String link = link_generator(1); //PASSAR O ID DA NOTÍCIA
+        String link = link_generator(noticiaId); //PASSAR O ID DA NOTÍCIA
 
 
-        Noticia noticia = new Noticia(noticiaGeral, titulo, fimNoticia, "1", link); //PASSAR O ID DA NOTÍCIA
+        Noticia noticia = new Noticia(noticiaGeral, titulo, fimNoticia, String.valueOf(noticiaId), link); //PASSAR O ID DA NOTÍCIA
 
         return noticia;
     }

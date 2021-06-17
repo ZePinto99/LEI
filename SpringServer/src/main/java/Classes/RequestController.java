@@ -21,8 +21,8 @@ public class RequestController {
 		int standartSize = 40;
 		List<Noticia> noticias = new ArrayList<>();
 		//gerar 3 notícias com diferentes tamanhos
-		for (int i=1; i<=3; i++){
-			TemplateManager templateManager = new TemplateManager(tg.getIdJogador(), standartSize);
+		for (int i=1; i<=1; i++){
+			TemplateManager templateManager = new TemplateManager(tg.getIdJogador(), standartSize*i);
 
 			noticias.add(templateManager.getFirstTemplate(tg));
 		}

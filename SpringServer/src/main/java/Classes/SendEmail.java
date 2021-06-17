@@ -33,7 +33,7 @@ public class SendEmail {
         try {
 
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("snmp.notifier@gmail.com"));
+            message.setFrom(new InternetAddress("leigrupo58@gmail.com"));
             //Remetente
 
             Address[] toUser = InternetAddress.parse(to_mail);
@@ -43,6 +43,7 @@ public class SendEmail {
             message.setText(content);
             /**Método para enviar a mensagem criada*/
             Transport.send(message);
+            Transport.send(message,toUser);
 
         } catch (MessagingException e) {
             throw new RuntimeException(e);
