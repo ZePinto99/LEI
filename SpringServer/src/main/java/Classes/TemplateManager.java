@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("ALL")
 public class TemplateManager {
 
 
@@ -23,9 +24,9 @@ public class TemplateManager {
     String tipoComp;
     String comp;
 
-    private List<Integer> usedIds = new ArrayList<>();
-    private List<Integer> usedVersions = new ArrayList<>();
-    private Values values;
+    private final List<Integer> usedIds = new ArrayList<>();
+    private final List<Integer> usedVersions = new ArrayList<>();
+    private final Values values;
     String titulo;
     String fimNoticia;
     String noticia;
@@ -117,7 +118,7 @@ public class TemplateManager {
 
             //INSERT INTO history VALUES (DEFAULT, NOW(), titulo, text, final_text, asssinatura, used_templates, tamanho, 0, 0);
             String sql = "INSERT INTO history VALUES(DEFAULT, NOW(), '" + titulo + "','" + noticiaGeral + "','" + noticiaGeral + "','" + fimNoticia + "','" + listToSqlQuery(usedIds) + "'," + tamanho + ",0,0);";
-            System.out.println("SQL-> " + sql);
+
             insert.execute(sql);
 
             sql = "SELECT id_noticia FROM history ORDER By id_noticia DESC limit 1";
@@ -263,15 +264,6 @@ public class TemplateManager {
         List<String> not_to_use_1_2_3_4 = Arrays.asList("TREINADOR", "ARBITRO", "NR_JOGOS_INV", "NR_JOGOS_SGOLOS_JOG", "EX_TREINADOR");
 
 
-        List<String> t1 = Arrays.asList("Nome_JOG", "POS_JOG", "NR_GOLOS_JOG_JR", "NR_JOGOS_JOG");
-
-        List<String> t2 = Arrays.asList("Nome_JOG", "POS_JOG", "NR_GOLOS_JOG_JR", "NR_JOGOS_JOG_TOTAL", "NR_GOLOS_TOP");
-
-        List<String> t3 = Arrays.asList("Nome_JOG", "POS_JOG", "NR_GOLOS_JOG");
-
-        List<String> t4 = Arrays.asList("Nome_JOG", "POS_JOG", "ESTREIA_JOG");
-
-
         if (not_to_use_1_2_3_4.contains(key)) {
             return false;
         }
@@ -279,12 +271,9 @@ public class TemplateManager {
         if (valueOfKey == 0)
             return true;
 
-        double sizeD = size;
         double valueD = valueOfKey + 1;
-        if ((sizeD) / valueD >= 1)//&& (temaNoticia.equals("1") && t1.contains(key) || temaNoticia.equals("2") && t2.contains(key) || temaNoticia.equals("3") && t3.contains(key) || temaNoticia.equals("4") && t4.contains(key)))
-            return true;
-
-        return false;
+        //&& (temaNoticia.equals("1") && t1.contains(key) || temaNoticia.equals("2") && t2.contains(key) || temaNoticia.equals("3") && t3.contains(key) || temaNoticia.equals("4") && t4.contains(key)))
+        return (size) / valueD >= 1;
     }
 
     /*
@@ -441,7 +430,6 @@ public class TemplateManager {
             noticiasParser.noticias(templateValues, noticia);
 
 
-            //System.out.println("título: " + titulo + "noticia: " + noticia);
             return noticia.toString();
         } catch (Exception e) {
 
@@ -502,14 +490,6 @@ public class TemplateManager {
         } catch (Exception e) {
             System.out.println("ERROR " + e.getMessage());
         }
-        /*
-        for (Map.Entry<Integer, Map<Integer, Integer>> entry : templateClassification.entrySet()) {
-            System.out.println("KEY " + entry.getKey() + " :");
-            for (Map.Entry<Integer, Integer> entry2 : templateClassification.get(entry.getKey()).entrySet()) {
-                System.out.println("Key: " + entry2.getKey().toString() + " Value: " + entry2.getValue().toString());
-            }
-        }
-        */
     }
 
     private String link_generator(int id){
