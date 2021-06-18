@@ -17,6 +17,9 @@ public class SendEmail {
                 "javax.net.ssl.SSLSocketFactory");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.port", "465");
+    }
+
+    public void run(String to_mail,String content, String subject){
 
         session = Session.getDefaultInstance(props,
                 new javax.mail.Authenticator() {
@@ -26,27 +29,23 @@ public class SendEmail {
                     }
                 });
 
-    }
-
-    public void run(String to_mail,String content, String subject){
-
         try {
 
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("leigrupo58@gmail.com"));
+            message.setFrom(new InternetAddress("LEIgrupo58@gmail.com"));
             //Remetente
 
             Address[] toUser = InternetAddress.parse(to_mail);
 
             message.setRecipients(Message.RecipientType.TO, toUser);
-            message.setSubject(subject);//Assunto
+            message.setSubject(subject);
             message.setText(content);
             /**Método para enviar a mensagem criada*/
             Transport.send(message);
-            Transport.send(message,toUser);
 
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
     }
+
 }

@@ -36,7 +36,7 @@ public class RequestController {
 		if (!noticias.isEmpty()){
 			content = noticias.get(0).titulo + "\n";
 			for (Noticia noticia : noticias)
-				content += noticia.toString() + "\n\n";
+				content += noticia.toString() + "\nLink para edição e classificação da notícia: " + noticia.link + "\n\n";
 		}
 
 		//Enviar as notícias geradas por email
@@ -45,7 +45,7 @@ public class RequestController {
 		for (String tosend_email : tosend) {
 			String finalContent = content;
 			Runnable runnable = () -> {
-				sendEmail.run(tosend_email, finalContent, "Notícia gerada");
+				sendEmail.run(tosend_email, finalContent, noticias.get(0).titulo);
 			};
 			Thread t = new Thread(runnable);
 			t.start();

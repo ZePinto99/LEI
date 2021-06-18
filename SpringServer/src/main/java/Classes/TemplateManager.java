@@ -520,7 +520,7 @@ public class TemplateManager {
                     .withIssuer("auth0")
                     .withClaim("id", id) //id da notícia
                     .sign(algorithm);
-            link = "https://localhost:3000/noticiaGerada?token=" + token;
+            link = "https://localhost:3000/notícia?token=" + token;
         } catch (JWTCreationException exception){
             //Invalid Signing configuration / Couldn't convert Claims.
         }
