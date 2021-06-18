@@ -56,6 +56,7 @@ public class Activator {
         return activationValue;
     }
 
+    //Método que devolve a classifição geral de um template
     //Dá zero se templateId não tiver no mapa de classificações
     public int priorityScore(int templateId, Map <Integer, Integer> templatesScores){
         int occures;
@@ -73,7 +74,8 @@ public class Activator {
         return 1/(1 + Math.pow(this.e, -x));
     }
 
-    //Check for non Repeatable Keywords
+    //Método que verifica se o template repete alguma keyword que não possa
+    //ser repetida.
     public boolean nonRepeatableKeywords(List<String> templateKeywords, Map<String, Integer> newsKeywords){
 
         Set<String> nonRepeatableKeywords = new HashSet();
