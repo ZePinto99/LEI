@@ -5,11 +5,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class ExternalDBAccess {
 
@@ -71,7 +68,6 @@ public class ExternalDBAccess {
             String sql = "SELECT nome FROM CompeticaoNome where idCompeticaoNome = " + idComp + ";";
             System.out.println(sql);
             ResultSet rs = select.executeQuery(sql);
-            String[] result = keys.split(",");
             int x = 0;
             while (rs.next()) {
                 return rs.getString(x + 1);
@@ -186,7 +182,6 @@ public class ExternalDBAccess {
         usedkeys= new ArrayList<>();
         List<String> usedkeystemp = new ArrayList<>();
 
-        boolean competicao = false;
 
         for(String keyword : keywords.keySet()) {
             if (keywords.get(keyword) > 0)
