@@ -1,0 +1,27 @@
+extends layout
+
+block content
+  a(href = '/homepage')
+    img( src="/images/ScoreImageHandler.png" style="margin-left:170px;margin-top:15px;position:fixed;z-index: 50;width:5%;height:10%")
+  script(type='text/javascript' src='/javascripts/functions.js' defer='')
+  script(type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js' defer='')  
+  div.w3-bar.w3-bar-lock.w3-center(style='z-index:1;background-color:#d6001c;overflow: hidden;height:80px')
+    div.w3-right(style='margin-right:150px;margin-top:20px')
+      a.w3-btn.w3-round-xlarge.w3-bar-item(href='http://localhost:3000/adicionarTemplate/') Adicionar Template  
+      a.w3-btn.w3-black.w3-round-xlarge.w3-bar-item(href='http://localhost:3000/users/logout/' ) Logout   
+  div(id=id style="padding-top:30px;margin-left: 27%;margin-right: auto;")
+      h3=noticia.titulo
+      textarea(rows='13' cols='50' style="width:60%" readonly)=noticia.noticia
+      .w3-row(style="width:60%;padding:25px")
+        .w3-col.s4.w3-center
+          button.w3-btn.w3-ripple.w3-red(type='submit' onclick="submitFinalNew()") Submeter
+        .w3-col.s4.w3-center
+          p #{data}
+        .w3-col.s4.w3-center
+            button(id='btn_like' class="button-transparent" onclick="sendClassification(1)")
+              i(id='icon_dislike' class="fa fa-thumbs-up" style="color:green;font-size:50px;")  
+            button(id='btn_dislike' class="button-transparent" style='padding-left:20px' onclick="sendClassification(0)")
+              i(id='icon_dislike' class="fa fa-thumbs-down" style="color:#d6001c;font-size:50px;")  
+      textarea(id='noticiaFinal' rows='13' cols='50' style="width:60%" name='Alterações' form='usrform')=noticia.finalText
+  footer.footer
+    address.w3-text-white SC Braga - UMinho - Projeto 58 - LEI
