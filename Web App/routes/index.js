@@ -1,5 +1,4 @@
 var express = require('express');
-const { route } = require('../../GitHub/4ano-2Semestre/PRC2021/APP/backend/routes');
 var router = express.Router();
 axios = require('axios');
 link = 'http://ec2-15-188-3-238.eu-west-3.compute.amazonaws.com:8080'
