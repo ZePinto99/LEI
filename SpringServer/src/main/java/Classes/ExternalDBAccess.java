@@ -44,14 +44,12 @@ public class ExternalDBAccess {
 
             conn.close();
 
-            return "Ze";
-
-
+            return null;
 
         } catch (Exception e) {
             System.out.println("ERROR " + e.getMessage());
         }
-        return "Ze";
+        return null;
     }
 
     public String getComp( String idComp) {
@@ -75,14 +73,14 @@ public class ExternalDBAccess {
 
             conn.close();
 
-            return "Ze";
+            return null;
 
 
 
         } catch (Exception e) {
             System.out.println("ERROR " + e.getMessage());
         }
-        return "Ze";
+        return null;
     }
 
 
@@ -113,7 +111,6 @@ public class ExternalDBAccess {
 
 
             conn.close();
-            /////////////////////////////////////s
 
         } catch (Exception e) {
             System.out.println("ERROR " + e.getMessage());
