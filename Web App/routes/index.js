@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 axios = require('axios');
-link = 'http://ec2-15-188-3-238.eu-west-3.compute.amazonaws.com:8080'
+link = 'ec2-15-188-60-29.eu-west-3.compute.amazonaws.com:8080'
 
 /* GET home page. */
 router.get('/homepage', function(req, res, next) {
