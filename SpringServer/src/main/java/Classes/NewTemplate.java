@@ -22,7 +22,7 @@ public class NewTemplate {
             Statement insert = conn.createStatement();
 
             //INSERT INTO history VALUES (DEFAULT, NOW(), titulo, text, final_text, asssinatura, used_templates, tamanho, 0, 0);
-            String sql = "INSERT INTO new_templates VALUES(DEFAULT, '" + newTemplate + "',0,0);";
+            String sql = "INSERT INTO new_templates VALUES(DEFAULT, '" + newTemplate + "');";
             System.out.println("SQL-> " + sql);
             insert.execute(sql);
 
