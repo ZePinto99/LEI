@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 axios = require('axios');
-link = 'ec2-15-188-60-29.eu-west-3.compute.amazonaws.com:8080'
+link = 'http://ec2-15-188-60-29.eu-west-3.compute.amazonaws.com:8080'
 
 /* GET home page. */
 router.get('/homepage', function(req, res, next) {
@@ -11,10 +11,9 @@ router.get('/homepage', function(req, res, next) {
         noticias.forEach(n=>{
           n.data = n.assinatura.split('em ')[1]
         })
-        console.log(noticias)
         res.render('index', { title: 'Home Page - Gerador de Notícias',noticias:noticias});
     })
-    .catch(error => console.log('error'))
+    .catch(error => console.log(error))
 });
 
 router.get('/noticiaGerada/:id',function(req,res,next){
@@ -35,7 +34,6 @@ router.get('/adicionarTemplate',function(req,res,next){
 router.get('/Classificate/:id/:rate',function(req,res,next){
   axios.post(link+'/classificate',{'id':req.params.id,'rate':req.params.rate})
     .then(response => {
-        console.log(response.data)
         res.status(200).jsonp({data:'Funcionou'})
     })
     .catch(error => res.status(500).jsonp({error:"Deu erro"}))
