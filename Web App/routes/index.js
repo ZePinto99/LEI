@@ -4,6 +4,10 @@ axios = require('axios');
 link = 'http://ec2-15-188-60-29.eu-west-3.compute.amazonaws.com:8080'
 
 /* GET home page. */
+router.get('/', function(req, res, next) {
+  res.redirect('/homepage')
+})
+
 router.get('/homepage', function(req, res, next) {
   axios.post(link+'/getNoticias',{'id':'1','lixo':'1'})
     .then(response => {
@@ -50,7 +54,8 @@ router.post('/ChangeFinalText',function(req,res,next){
 
 router.post('/SubmitTemplate',function(req,res,next){
   template = req.body.template
-  axios.post(link+'/submitTemplate',{'newtemplate':template,'lixo':'1'})
+  console.log(template)
+  axios.post(link+'/submitTemplate',{'newTemplate':template,'lixo':'1'})
     .then(response => {
         res.status(200).jsonp({data:'Funcionou'})
     })
