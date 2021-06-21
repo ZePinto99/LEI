@@ -6,12 +6,13 @@ import java.sql.Statement;
 
 public class NewTemplate {
     String newTemplate;
+    String lixo;
 
-    public NewTemplate(String newTemplate) {
+    public NewTemplate(String newTemplate,String lixo) {
         this.newTemplate = newTemplate;
     }
 
-    public void changeText(){
+    public void addText(){
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
 

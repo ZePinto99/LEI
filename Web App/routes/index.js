@@ -32,7 +32,7 @@ router.get('/adicionarTemplate',function(req,res,next){
   res.render('adicionarTemplate',{title:'Adicionar Template - Gerador de Notícias'})
 })
 
-router.get('/classificate/:id/:rate',function(req,res,next){
+router.get('/Classificate/:id/:rate',function(req,res,next){
   axios.post(link+'/classificate',{'id':req.params.id,'rate':req.params.rate})
     .then(response => {
         console.log(response.data)
@@ -43,7 +43,7 @@ router.get('/classificate/:id/:rate',function(req,res,next){
 
 router.post('/ChangeFinalText',function(req,res,next){
   noticiaAlt = req.body.noticiaAlterada
-  axios.post(link+'/ChangeFinalText',{'id':req.body.id,'noticiaAlterada':noticiaAlt})
+  axios.post(link+'/changeFinalText',{'id':req.body.id,'noticiaAlterada':noticiaAlt})
     .then(response => {
         res.status(200).jsonp({data:'Funcionou'})
     })
@@ -52,15 +52,11 @@ router.post('/ChangeFinalText',function(req,res,next){
 
 router.post('/SubmitTemplate',function(req,res,next){
   template = req.body.template
-  /*
-  axios.post(link+'/submitTemplate',{'template':template})
+  axios.post(link+'/submitTemplate',{'newtemplate':template,'lixo':'1'})
     .then(response => {
         res.status(200).jsonp({data:'Funcionou'})
     })
     .catch(error => res.status(500).jsonp({error:"Deu erro"}))
-    */
-   console.log(template)
-   res.status(200).jsonp({data:'YEI'})
 })
 
 

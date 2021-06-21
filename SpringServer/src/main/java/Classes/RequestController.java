@@ -82,13 +82,23 @@ public class RequestController {
 		return;
 	}
 
-	@PostMapping("/ChangeFinalText")
-	public void setClassification(@RequestBody ChangeFinalText cft) {
+	@PostMapping("/changeFinalText")
+	public void setChangeFinalText(@RequestBody ChangeFinalText cft) {
 
 		cft.changeText();
 
 
 		return;
 	}
+
+	@PostMapping("/submitTemplate")
+	public void submitTemplate(@RequestBody newTemplate ntm) {
+
+		ntm.addText();
+
+
+		return;
+	}
+
 
 }
