@@ -242,7 +242,7 @@ INSERT INTO template VALUES (DEFAULT, 7, 54, 22,'Esta marca foi atingida nesta �
 INSERT INTO keywords VALUES (55 ,1,0,1,0,0,0,0,1,0,0,0,0,0,1,1,0,1,0,0,1,0,0,0,0,0,0,0,0);
 INSERT INTO template VALUES (DEFAULT, 7, 55, 22,'Esta marca foi atingida nesta última partida disputada "COMPETICAO" contra o "ADVERSARIO", jogada no "ESTADIO" e que terminou "MARCADOR_JORNADA", na qual "NOME_JOG" marcou "NR_GOLOS_JOG_JR".', 0);
 
-
+/*
 -- version 8 - assunto: info sobre epoca anterior (type 0)
 INSERT INTO version VALUES (8,0);
 
@@ -270,6 +270,7 @@ INSERT INTO keywords VALUES (61 ,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 INSERT INTO template VALUES (DEFAULT, 8, 61, 16,'Na época passada, terminou com "NR_GOLOS_JOG_EPOCA_ANT" golos em "NR_JOGOS_JOG_EPOCA_ANT" jogos "COMPETICAO" pelo clube.', 0);
 INSERT INTO template VALUES (DEFAULT, 8, 61, 20,'Relativamente à época transata, havia terminado a mesma com "NR_GOLOS_JOG_EPOCA_ANT" golos em "NR_JOGOS_JOG_EPOCA_ANT" jogos "COMPETICAO" pelo clube.', 0);
 
+*/
 
 -- version 8 - assunto: info sobre epoca atual (type 0)
 INSERT INTO version VALUES (9,0);
