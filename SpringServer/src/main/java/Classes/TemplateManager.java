@@ -517,7 +517,7 @@ public class TemplateManager {
                     .withIssuer("auth0")
                     .withClaim("id", id) //id da notícia
                     .sign(algorithm);
-            link = "https://ec2-15-188-60-29.eu-west-3.compute.amazonaws.com:3000/noticia?token=" + token;
+            link = "http://ec2-15-188-60-29.eu-west-3.compute.amazonaws.com:3000/noticia?token=" + token;
         } catch (JWTCreationException exception){
             //Invalid Signing configuration / Couldn't convert Claims.
         }
