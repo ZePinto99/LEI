@@ -40,7 +40,7 @@ public class Values {
         values.put("CASA/FORA", "Erro_CASAFORA_Não_Mapeado");
         values.put("ADVERSARIO", "Erro_Adversario");
         values.put("ESTADIO", "Erro_Estadio");
-        values.put("LOCALIZACAO", "erro_Localizacao_Não_Mapeado");
+        values.put("LOCALIZACAO", "Erro_Localizacao_Não_Mapeado");
         values.put("MARCADOR_JORNADA", "Erro_MARCADOR_JORNADA");
         values.put("ESTREIA_JOG", "Erro_ESTREIA_JOG");
         values.put("RESULTADO_ESTREIA", "Erro_RESULTADO_ESTREIA");
@@ -83,6 +83,10 @@ public class Values {
     }
 
     public void addToNumberOfTemplates(){
+        numberOfTemplates++;
+    }
+
+    public void subToNumberOfTemplates(){
         numberOfTemplates++;
     }
 

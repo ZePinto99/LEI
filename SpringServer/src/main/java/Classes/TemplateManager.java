@@ -72,7 +72,7 @@ public class TemplateManager {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             Connection conn = DriverManager.
-                    getConnection("jdbc:mysql://projetoleibd.cpjxfbj4rl9p.eu-west-3.rds.amazonaws.com:3306/mydb?user=Grupo58&password="
+                    getConnection("jdbc:mysql://projetolei.cbtwyelra1do.eu-west-3.rds.amazonaws.com:3306/projetoLei?user=admin&password="
                             + "password" + "&useTimezone=true&serverTimezone=UTC");
 
             Statement select = conn.createStatement();
@@ -111,7 +111,7 @@ public class TemplateManager {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             Connection conn = DriverManager.
-                    getConnection("jdbc:mysql://projetoleibd.cpjxfbj4rl9p.eu-west-3.rds.amazonaws.com:3306/mydb?user=Grupo58&password="
+                    getConnection("jdbc:mysql://projetolei.cbtwyelra1do.eu-west-3.rds.amazonaws.com:3306/projetoLei?user=admin&password="
                             + "password" + "&useTimezone=true&serverTimezone=UTC");
 
             Statement insert = conn.createStatement();
@@ -172,7 +172,7 @@ public class TemplateManager {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             Connection conn = DriverManager.
-                    getConnection("jdbc:mysql://projetoleibd.cpjxfbj4rl9p.eu-west-3.rds.amazonaws.com:3306/mydb?user=Grupo58&password="
+                    getConnection("jdbc:mysql://projetolei.cbtwyelra1do.eu-west-3.rds.amazonaws.com:3306/projetoLei?user=admin&password="
                             + "password" + "&useTimezone=true&serverTimezone=UTC");
 
 
@@ -356,11 +356,12 @@ public class TemplateManager {
         usedIds.add(template);
 
         Map<String, Integer> keywordsTemplate = new HashMap<>();
+        Map<String, Integer> keywordsCountStore = new HashMap<String, Integer>();
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             Connection conn = DriverManager.
-                    getConnection("jdbc:mysql://projetoleibd.cpjxfbj4rl9p.eu-west-3.rds.amazonaws.com:3306/mydb?user=Grupo58&password="
+                    getConnection("jdbc:mysql://projetolei.cbtwyelra1do.eu-west-3.rds.amazonaws.com:3306/projetoLei?user=admin&password="
                             + "password" + "&useTimezone=true&serverTimezone=UTC");
 
             Statement select = conn.createStatement();
@@ -370,6 +371,7 @@ public class TemplateManager {
             ResultSet rs = select.executeQuery(sql);
             if (rs == null) return -1;
             Map<String, Integer> keywordsCount = values.getKeywords();
+            keywordsCountStore = values.getKeywords();
 
             keywordsTemplate = values.keywordsList.stream().collect(Collectors.toMap(Function.identity(), i -> 0));
 
@@ -395,7 +397,17 @@ public class TemplateManager {
         } catch (Exception e) {
             System.out.println("ERROR " + e.getMessage());
         }
-        noticiaGeral += fillScript(noticia, keywordsTemplate);
+
+        String result = fillScript(noticia, keywordsTemplate);
+        if(!result.equals("erro")){
+            noticiaGeral += result;
+        }else{
+            tamanho -= templateIdPlusSizeMap.get(template);
+            usedVersions.remove(templateIdPlusVersionMap.get(template));
+            values.setKeywords(keywordsCountStore);
+            values.subToNumberOfTemplates();
+        }
+
 
 
         return templateIdPlusSizeMap.get(template);
@@ -429,6 +441,11 @@ public class TemplateManager {
             StringBuilder noticia = new StringBuilder();
             noticiasParser.noticias(templateValues, noticia);
 
+            for (String key : keywordsTemplate.keySet()){
+                if (templateValues.getValue(key).contains("Erro"))
+                    return "erro";
+            }
+
 
             return noticia.toString();
         } catch (Exception e) {
@@ -448,7 +465,7 @@ public class TemplateManager {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             Connection conn = DriverManager.
-                    getConnection("jdbc:mysql://projetoleibd.cpjxfbj4rl9p.eu-west-3.rds.amazonaws.com:3306/mydb?user=Grupo58&password="
+                    getConnection("jdbc:mysql://projetolei.cbtwyelra1do.eu-west-3.rds.amazonaws.com:3306/projetoLei?user=admin&password="
                             + "password" + "&useTimezone=true&serverTimezone=UTC");
 
             Statement select = conn.createStatement();
@@ -500,7 +517,7 @@ public class TemplateManager {
                     .withIssuer("auth0")
                     .withClaim("id", id) //id da notícia
                     .sign(algorithm);
-            link = "https://localhost:3000/notícia?token=" + token;
+            link = "https://ec2-15-188-60-29.eu-west-3.compute.amazonaws.com:3000/noticia?token=" + token;
         } catch (JWTCreationException exception){
             //Invalid Signing configuration / Couldn't convert Claims.
         }

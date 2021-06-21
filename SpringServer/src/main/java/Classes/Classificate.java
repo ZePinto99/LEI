@@ -20,7 +20,7 @@ public class Classificate {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             Connection conn = DriverManager.
-                    getConnection("jdbc:mysql://projetoleibd.cpjxfbj4rl9p.eu-west-3.rds.amazonaws.com:3306/mydb?user=Grupo58&password="
+                    getConnection("jdbc:mysql://projetolei.cbtwyelra1do.eu-west-3.rds.amazonaws.com:3306/mydb?user=admin&password="
                             + "password" + "&useTimezone=true&serverTimezone=UTC");
 
             Statement insert = conn.createStatement();
