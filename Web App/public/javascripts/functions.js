@@ -1,9 +1,9 @@
-const link = 'http://localhost:3000'
+const link = 'http://ec2-15-188-60-29.eu-west-3.compute.amazonaws.com:3000'
 
 function sendClassification(value){
     idNoticia = window.location.pathname.split("/").pop()
     $.ajax({
-        url: link + '/classificate/'+idNoticia+'/'+value,
+        url: link + '/Classificate/'+idNoticia+'/'+value,
         type: "GET",
         success: function () {
             changeColorsBtnLike()
