@@ -6,9 +6,9 @@ import java.sql.Statement;
 
 public class NewTemplate {
     String newTemplate;
-    String lixo;
+    String bugFixer;
 
-    public NewTemplate(String newTemplate,String lixo) {
+    public NewTemplate(String newTemplate,String bugFixer) {
         this.newTemplate = newTemplate;
     }
 

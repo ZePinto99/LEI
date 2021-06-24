@@ -356,6 +356,7 @@ public class TemplateManager {
         usedIds.add(template);
 
         Map<String, Integer> keywordsTemplate = new HashMap<>();
+        Map<String, Integer> keywordsTemplateIter = new HashMap<>();
         Map<String, Integer> keywordsCountStore = new HashMap<String, Integer>();
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -380,6 +381,7 @@ public class TemplateManager {
                 for (String key : values.keywordsList) {
                     keywordsCount.put(key, rs.getInt(i + 1) + keywordsCount.get(key));
                     keywordsTemplate.put(key, rs.getInt(i + 1));
+                    keywordsTemplateIter.put(key,rs.getInt(i + 1));
                     i++;
                 }
             }
@@ -398,7 +400,7 @@ public class TemplateManager {
             System.out.println("ERROR " + e.getMessage());
         }
 
-        String result = fillScript(noticia, keywordsTemplate);
+        String result = fillScript(noticia, keywordsTemplateIter);
         if(!result.equals("erro")){
             noticiaGeral += result;
         }else{
@@ -442,7 +444,7 @@ public class TemplateManager {
             noticiasParser.noticias(templateValues, noticia);
 
             for (String key : keywordsTemplate.keySet()){
-                if (templateValues.getValue(key).contains("Erro"))
+                if (templateValues.getValue(key) != null &&  templateValues.getValue(key).contains("Erro") && keywordsTemplate.get(key) != 0)
                     return "erro";
             }
 

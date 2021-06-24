@@ -10,9 +10,9 @@ import java.util.List;
 public class GetNoticias {
 
     String id;
-    String lixo;
+    String bugFixer;
 
-    public GetNoticias(String id, String lixo) {
+    public GetNoticias(String id, String bugFixer) {
         this.id = id;
     }
 

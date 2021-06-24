@@ -18,7 +18,7 @@ public class RequestController {
 
 	@PostMapping("/getInfo")
 	public String getInfo(@RequestBody Tags tg) {
-		int standartSize = 40;
+		int standartSize = 50;
 		List<Noticia> noticias = new ArrayList<>();
 		//gerar 3 notícias com diferentes tamanhos
 		for (int i=1; i<=3; i++){
