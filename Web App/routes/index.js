@@ -9,7 +9,7 @@ router.get('/', function(req, res, next) {
 })
 
 router.get('/homepage', function(req, res, next) {
-  axios.post(link+'/getNoticias',{'id':'1','lixo':'1'})
+  axios.post(link+'/getNoticias',{'id':'1','bugFixer':'1'})
     .then(response => {
         noticias = response.data.noticias
         noticias.forEach(n=>{
@@ -21,7 +21,7 @@ router.get('/homepage', function(req, res, next) {
 });
 
 router.get('/noticiaGerada/:id',function(req,res,next){
-  axios.post(link+'/getNoticia',{'id':req.params.id,'lixo':'1'})
+  axios.post(link+'/getNoticia',{'id':req.params.id,'bugFixer':'1'})
     .then(response => {
         noticia = response.data
         data = noticia.assinatura.split('em ')[1]
@@ -55,7 +55,7 @@ router.post('/ChangeFinalText',function(req,res,next){
 router.post('/SubmitTemplate',function(req,res,next){
   template = req.body.template
   console.log(template)
-  axios.post(link+'/submitTemplate',{'newTemplate':template,'lixo':'1'})
+  axios.post(link+'/submitTemplate',{'newTemplate':template,'bugFixer':'1'})
     .then(response => {
         res.status(200).jsonp({data:'Funcionou'})
     })
