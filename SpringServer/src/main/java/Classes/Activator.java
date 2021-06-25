@@ -7,17 +7,14 @@ public class Activator {
     private int constant;
     private Map<Integer, Map<Integer, Integer>> templateClassification;
 
-    //Possivelmente pode receber um map com as priority keywords de cada keyword
     public Activator(int constant, Map templateClassification) {
         this.constant = constant;
         e = 2.2204460492503130808472633361816;
-        templateClassification = templateClassification;
+        this.templateClassification = templateClassification;
     }
 
     //função que calcula o score de um template
     //o templates score será a junção de todos da relação co todos os templates
-    //isto vai implicar ao inserirmos cada template termos um de fazer puts às relações com templates que não existiam e atualizar os valore
-    //de registos que já existem
     public double tempScore(List<String> templateKeywords, Map<String, Integer> newsKeywords, List<Integer> templatesUsed, int templateId){
         int score = 0;
 

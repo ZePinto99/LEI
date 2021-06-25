@@ -50,7 +50,10 @@ public class TemplateManager {
         this.tamanhoMax = tamanhoMax;
     }
 
-
+    /*
+     	Método responsável por aceder à Base de Dados e escolher um template inicial adequado, consoante o tipo da notícia e os atributos.
+        Após isso, este método invoca o método templateLoop e, aquando do término deste, irá inserir a notícia gerada no histórico, gerar o link para a mesma e, por fim, devolver a notícia gerada.
+     */
     public Noticia getFirstTemplate(Tags tg) {
         noticia = "";
         temaNoticia = tg.getTipoAlerta();
@@ -95,7 +98,7 @@ public class TemplateManager {
         ExternalDBAccess eDBA = new ExternalDBAccess();
         comp = eDBA.getComp(tipoComp);
 
-        //escolher 1o template
+        //escolher 1º template
         titulo = getTitulo() + " " + eDBA.getName(idjog);
         int templateId = selectTemplate();
         if (templateId != -1) updateWithSelectedTemplate(templateId);
@@ -116,7 +119,6 @@ public class TemplateManager {
 
             Statement insert = conn.createStatement();
 
-            //INSERT INTO history VALUES (DEFAULT, NOW(), titulo, text, final_text, asssinatura, used_templates, tamanho, 0, 0);
             String sql = "INSERT INTO history VALUES(DEFAULT, NOW(), '" + titulo + "','" + noticiaGeral + "','" + noticiaGeral + "','" + fimNoticia + "','" + listToSqlQuery(usedIds) + "'," + tamanho + ",0,0);";
 
             insert.execute(sql);
@@ -133,8 +135,6 @@ public class TemplateManager {
         } catch (Exception e) {
             System.out.println("ERROR " + e.getMessage());
         }
-
-        //Ir buscar o id da notícia
 
         //Gera link
         String link = link_generator(noticiaId); //PASSAR O ID DA NOTÍCIA
@@ -159,6 +159,10 @@ public class TemplateManager {
         return "";
     }
 
+    /*
+    	Método recursivo, que seleciona os diversos templates que são elegíveis para seleção e, de seguida, utiliza o método updateWithSelectedTemplate para seleção do template correto.
+        Enquanto o tamanho da notícia for inferior ao desejado, este método executa recursivamente.
+     */
     public void templateLoop() {
 
         System.out.println("Entrou templateLoop");
@@ -181,7 +185,6 @@ public class TemplateManager {
             String usedVersionsString = listToSqlQuery(usedVersions);
 
             //adicionar filtros na query para ver keyWords relevantes
-
 
             String sql = "SELECT text, keywords, id_template, size, version FROM template, keywords WHERE template.primary = 0 and id_template NOT IN (" + usedIdsString + ") and version NOT IN (" + usedVersionsString + ") and template.keywords = id_keywords " + keywordsSqlString(size) + ";";
 
@@ -306,8 +309,6 @@ public class TemplateManager {
         //random.nextInt(max - min) + min;
         //Score/Probabilidade que os templates têm de bater (o facto de ser aleatória significa que todos os templates podem aparecer
         //                                                   mas quanto maior for o score do template maior a probabilidade de ser escolhido)
-        // nota: Existe um problema com esta abordagem. Se tivermos um randProb muito alto podemos não conseguir escolher nenhum template.
-        //       Para resolver isto temos um max e maxTmpId que vão armazenado o template com melhor score
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         Random random = new Random();
         double randProb = random.nextInt(1);
@@ -325,9 +326,7 @@ public class TemplateManager {
             int templateIndex = selectTemplate();
             if (templateIndex == -1) return templateIndex;
             iteration++;
-            /////////////////////// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ////////////////////////
-            /////////////////////// É preciso ver o que templateIdPlusKeywordsMap devolve ////////////////////////
-            /////////////////////// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ////////////////////////
+
             List<String> templateKeywords = new ArrayList<>(); //!!!É PRECISO IR BUSCAR AS KEYWORDS DO TEMPLATE!!!//
 
             //Calculamos o score para o template ser selecionado com base nas suas keywords
@@ -349,6 +348,9 @@ public class TemplateManager {
         return maxTmpId;
     }
 
+    /*
+    	Método chamado sempre que é selecionado um template e que é responsável por atualizar a notícia e todos os seus dados, como número de templates, keywords usadas e tamanho com o novo template.
+     */
     public int updateWithSelectedTemplate(int template) {
 
 
@@ -415,7 +417,9 @@ public class TemplateManager {
         return templateIdPlusSizeMap.get(template);
     }
 
-
+    /*
+    	Método responsável pelo preenchimento dos valores com informação da base de dados do grupo 6, tirando partido da classe ExternalDBAccess. De seguida, este método invoca diversos métodos da gramática, que passam os valores para a notícia.
+     */
     public String fillScript(String template, Map<String, Integer> keywordsTemplate) {
         try {
 
